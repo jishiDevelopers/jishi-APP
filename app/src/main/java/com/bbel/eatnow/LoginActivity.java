@@ -1,19 +1,16 @@
 package com.bbel.eatnow;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.transition.Explode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-
-import com.bbel.eatnow.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -27,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_Login);
+        setContentView(R.layout.activity_login);
         initView();
         setListener();
     }
@@ -51,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
                 getWindow().setExitTransition(explode);
                 getWindow().setEnterTransition(explode);
                 ActivityOptionsCompat oc2 = ActivityOptionsCompat.makeSceneTransitionAnimation(LoginActivity.this);
-                Intent i2 = new Intent(LoginActivity.this,LoginSuccessActivity.class);
+                Intent i2 = new Intent(LoginActivity.this, LoginSuccessActivity.class);
                 startActivity(i2, oc2.toBundle());
             }
         });
