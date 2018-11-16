@@ -2,6 +2,8 @@ package com.bbel.eatnow;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +13,14 @@ import android.transition.TransitionInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateInterpolator;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class ForgetPasswordActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
     private CardView forget;
+    private Button buttonReset;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +28,7 @@ public class ForgetPasswordActivity extends AppCompatActivity {
         setContentView(R.layout.activity_forget_password);
         ShowEnterAnimation();
         initView();
+        setListener();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,8 +38,22 @@ public class ForgetPasswordActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        fab = findViewById(R.id.fab_f);
+        fab = findViewById(R.id.fab);
         forget = findViewById(R.id.forget);
+        buttonReset = findViewById(R.id.bt_go);
+    }
+
+    private void setListener() {
+        buttonReset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getWindow().setExitTransition(null);
+                getWindow().setEnterTransition(null);
+                ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(ForgetPasswordActivity.this);
+                Intent i2 = new Intent(ForgetPasswordActivity.this,LoginActivity.class);
+                startActivity(i2, oc2.toBundle());
+            }
+        });
     }
 
     private void ShowEnterAnimation() {
@@ -114,4 +134,5 @@ public class ForgetPasswordActivity extends AppCompatActivity {
     public void onBackPressed() {
         animateRevealClose();
     }
+
 }

@@ -11,6 +11,7 @@ import android.transition.Explode;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -19,7 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     private Button buttonGo;
     private CardView login;
     private FloatingActionButton fabRegister;
-    private FloatingActionButton fabForgetPassword;
+    private TextView textViewForgetPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +36,11 @@ public class LoginActivity extends AppCompatActivity {
         buttonGo = findViewById(R.id.bt_go);
         login = findViewById(R.id.login);
         fabRegister = findViewById(R.id.fab);
-        fabForgetPassword = findViewById(R.id.fab_f);
+        textViewForgetPassword = findViewById(R.id.forget_password);
     }
 
     private void setListener() {
+        //跳转到登录成功界面
         buttonGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,11 +49,12 @@ public class LoginActivity extends AppCompatActivity {
 
                 getWindow().setExitTransition(explode);
                 getWindow().setEnterTransition(explode);
-                ActivityOptionsCompat oc2 = ActivityOptionsCompat.makeSceneTransitionAnimation(LoginActivity.this);
-                Intent i2 = new Intent(LoginActivity.this, LoginSuccessActivity.class);
-                startActivity(i2, oc2.toBundle());
+                ActivityOptionsCompat oc1 = ActivityOptionsCompat.makeSceneTransitionAnimation(LoginActivity.this);
+                Intent i1 = new Intent(LoginActivity.this, LoginSuccessActivity.class);
+                startActivity(i1, oc1.toBundle());
             }
         });
+        //跳转到注册界面
         fabRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -61,13 +64,15 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class), options.toBundle());
             }
         });
-        fabForgetPassword.setOnClickListener(new View.OnClickListener() {
+        //跳转到忘记密码界面
+        textViewForgetPassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getWindow().setExitTransition(null);
                 getWindow().setEnterTransition(null);
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this, fabForgetPassword, fabForgetPassword.getTransitionName());
-                startActivity(new Intent(LoginActivity.this, ForgetPasswordActivity.class), options.toBundle());
+                ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(LoginActivity.this);
+                Intent i2 = new Intent(LoginActivity.this,ForgetPasswordActivity.class);
+                startActivity(i2, oc2.toBundle());
             }
         });
     }
@@ -75,13 +80,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        fabRegister.setVisibility(View.GONE);
+        fabRegister.hide();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        fabRegister.setVisibility(View.VISIBLE);
+        fabRegister.show();
     }
 }
 

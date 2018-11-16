@@ -111,14 +111,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/forget_password" />
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/fab_f"
-                android:theme="@style/AlertDialog.AppCompat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fabSize="normal"
-                android:src="@drawable/plus"
-                android:transitionName="loginFab" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 
