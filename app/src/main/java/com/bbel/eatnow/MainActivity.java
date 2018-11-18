@@ -1,5 +1,9 @@
 package com.bbel.eatnow;
 
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;

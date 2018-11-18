@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">EatNow</string>
+    <string name="app_name">即食</string>
+    <string name="login_success">login success</string>
+    <string name="login">登录</string>
+    <string name="phone_number">请输入手机号</string>
+    <string name="password">请输入密码</string>
+    <string name="forget_password">忘记密码 ?</string>
+    <string name="reset_password">重置密码</string>
+    <string name="go">登录</string>
+    <string name="repeat_password">请确认密码</string>
+    <string name="Next_R">注册</string>
+    <string name="Next_F">重置</string>
+    <string name="register">注册</string>
+    <string name="send">发送验证码</string>
+    <string name="code">请输入验证码</string>
+
 </resources>
