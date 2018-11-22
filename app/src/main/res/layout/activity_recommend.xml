@@ -9,21 +9,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="290dp"
+        android:layout_marginTop="160dp"
+        android:background="@drawable/shape_textbackground"
         android:orientation="vertical"
         >
-
         <TextView
             android:id="@+id/tv_recommend_restaurant"
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_gravity="center"
-            android:layout_marginTop="160dp"
-            android:paddingTop="10dp"
             android:gravity="center"
+            android:paddingTop="10dp"
             android:text=""
+            android:maxLines="2"
             android:textColor="#000000"
-            android:textSize="25dp"
+            android:textSize="20dp"
             android:textStyle="bold"
             />
         <TextView
@@ -42,42 +43,9 @@
         android:layout_width="match_parent"
         android:layout_height="110dp"
         android:layout_marginTop="50dp"
+
         >
-
-        <Button
-            android:id="@+id/bt_recommend_first"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="25dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/first_button"
-            />
-
-        <Button
-            android:id="@+id/bt_recommend_second"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="125dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/second_button" />
-
-        <Button
-            android:id="@+id/bt_recommend_third"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="225dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/third_button" />
-
-        <Button
-            android:id="@+id/bt_recommend_fourth"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="325dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/fourth_button" />
     </RelativeLayout>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -95,7 +63,7 @@
             android:textColor="#ffffff"
             android:textStyle="bold"
             android:textSize="20dp"
-            android:background="@drawable/shape_button"/>
+            android:background="@drawable/shape_button_next_restaurant"/>
 
         <Button
             android:id="@+id/bt_recommend_next_restaurant"
@@ -106,7 +74,7 @@
             android:textSize="20dp"
             android:background="@drawable/shape_button_next_restaurant"
             android:text="换一家"
-            android:textColor="#000000"
+            android:textColor="#ffffff"
             android:textStyle="bold" />
     </RelativeLayout>
 </FrameLayout>
