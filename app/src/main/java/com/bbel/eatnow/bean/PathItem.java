@@ -8,8 +8,10 @@ import android.graphics.RectF;
 import android.graphics.Region;
 
 public class PathItem {
+
     private Path mPath;
     private boolean isSelect;
+    private String name;
 
     public PathItem(Path path) {
         mPath = path;
@@ -43,19 +45,28 @@ public class PathItem {
             paint.clearShadowLayer();
             paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
-            canvas.drawPath(mPath,paint);
+            canvas.drawPath(mPath, paint);
         } else {
             //绘制具体显示的
             paint.clearShadowLayer();
             paint.setColor(Color.GRAY);
             paint.setStyle(Paint.Style.FILL);
-            canvas.drawPath(mPath,paint);
+            canvas.drawPath(mPath, paint);
         }
     }
 
     public PathItem setSelect(boolean select) {
         isSelect = select;
         return this;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

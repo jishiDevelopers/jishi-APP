@@ -21,6 +21,8 @@ import org.w3c.dom.NodeList;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,13 +40,14 @@ public class MapView extends View {
     //手势监听器
     private GestureDetector mDetector;
     //缩放系数
-    private float scale=1.3f;
+    private float scale = 1.3f;
     //保存path对象
-    private List<PathItem> pathItems = new ArrayList<>();
-    private String TAG="MapView";
+    private List<PathItem> pathItems;
+
+    private String TAG = "MapView";
 
     public MapView(Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public MapView(Context context, @Nullable AttributeSet attrs) {
@@ -52,19 +55,33 @@ public class MapView extends View {
         init();
     }
 
+    public void setChoose(String name) {
+        for (PathItem pathItem : pathItems) {
+            if (pathItem.getName().equals(name)) {
+                pathItem.setSelect(true);
+            } else {
+                pathItem.setSelect(false);
+            }
+        }
+        invalidate();
+    }
+
     private void init() {
         //关闭硬件加速
-        setLayerType(LAYER_TYPE_SOFTWARE,null);
+        setLayerType(LAYER_TYPE_SOFTWARE, null);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mDetector=new GestureDetector(new GestureDetector.SimpleOnGestureListener(){
+
+        mDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDown(MotionEvent e) {
                 float x = e.getX() / scale;
                 float y = e.getY() / scale;
+//                float x = e.getX();
+//                float y = e.getY();
                 for (PathItem pathItem : pathItems) {
-                    if (pathItem.isTouch((int) x, (int) y)){
+                    if (pathItem.isTouch((int) x, (int) y)) {
                         pathItem.setSelect(true);
-                    }else {
+                    } else {
                         pathItem.setSelect(false);
                     }
                 }
@@ -72,8 +89,10 @@ public class MapView extends View {
                 return true;
             }
         });
-        parserPaths();
+//        parserPaths();
+        pathItems = getPathItems();
     }
+
 
     /**
      * 解析path
@@ -100,13 +119,14 @@ public class MapView extends View {
                         Element personNode = (Element) paths.item(i);
                         //得到android:pathData属性值
                         String nodeValue = personNode.getAttribute("android:pathData");
+//                        String name = personNode.getAttribute("android:name");
                         //解析，并创建pathItem
                         item = new PathItem(PathParser.createPathFromPathData(nodeValue));
                         pathItems.add(item);
                     }
-                    Log.e(TAG, "蜗牛   itemsCount  " + pathItems.size());
+                    Log.e(TAG, "itemsCount  " + pathItems.size());
                 } catch (Exception e) {
-                    Log.e(TAG, "蜗牛   解析出错 " );
+                    Log.e(TAG, "解析出错 ");
                 }
             }
         }).start();
@@ -128,5 +148,39 @@ public class MapView extends View {
         }
         canvas.restore();
     }
+
+
+    private List<PathItem> getPathItems() {
+        List<PathItem> pathItems = new ArrayList<>();
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        try {
+            // DocumentBuilder对象
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            //打开输入流
+            InputStream is = getResources().openRawResource(R.raw.taiwan_maps);
+//                    getResources().ope
+            // 获取文档对象
+            Document doc = db.parse(is);
+            //获取path元素节点集合
+            NodeList paths = doc.getElementsByTagName("path");
+            PathItem item;
+            for (int i = 0; i < paths.getLength(); i++) {
+                // 取出每一个元素
+                Element personNode = (Element) paths.item(i);
+                //得到android:pathData属性值
+                String nodeValue = personNode.getAttribute("android:pathData");
+//                        String name = personNode.getAttribute("android:name");
+                //解析，并创建pathItem
+                item = new PathItem(PathParser.createPathFromPathData(nodeValue));
+                pathItems.add(item);
+            }
+            Log.e(TAG, "蜗牛   itemsCount  " + pathItems.size());
+        } catch (Exception e) {
+            Log.e(TAG, "蜗牛   解析出错 ");
+        }
+        return pathItems;
+    }
+
+
 }
 

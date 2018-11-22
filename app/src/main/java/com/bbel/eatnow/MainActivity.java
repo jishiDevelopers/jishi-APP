@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -75,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.location);
+
+        Button button = findViewById(R.id.main_button_test);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, StoreLocationActivity.class));
+            }
+        });
+
     }
 
 
