@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">EatNow</string>
+
+    <string name="title_1">推给您的第一家</string>
+    <string name="title_2">推给您的第二家</string>
+    <string name="title_3">推给您的第三家</string>
+    <string name="title_4">推给您的第四家</string>
+
+    <string name="text_1">没有更多的了</string>
 </resources>
