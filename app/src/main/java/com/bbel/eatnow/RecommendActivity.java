@@ -36,19 +36,19 @@ public class RecommendActivity extends AppCompatActivity implements View.OnClick
     private CardFragmentPagerAdapter1 mFragmentCardAdapter;
     private ShadowTransformer1 mFragmentCardShadowTransformer1;
     private boolean mShowingFragments = false;
-    private String[] restaurantArray ;
-    //= {"兰州拉面", "腊么香", "千里香混沌", "酷乐吧"};
-    private String[] dishesArray;
-    //={"炒面", "炒饭", "大碗混沌", "烤肉饭"};
-    private String[] canteensArray ;
-    //= {"玫瑰一楼", "玫瑰二楼", "玫瑰二楼", "玫瑰二楼"};
-    private String[] dishNumArray ;
-    //= {"dish1", "dish2", "dish3", "dish4", "dish5", "dish6", "dish7", "dish8", "dish9", "dish10"};
-    private String[] dishId ;
-    //= {"211", "187", "192", "201", "188"};
-    private String[] restaurantId ;
-    //= {"15", "15", "30", "30", "38"};
-    private String dishNum;
+    private String[] restaurantArray= {"兰州拉面", "腊么香", "千里香混沌", "酷乐吧"};
+    //
+    private String[] dishesArray={"炒面", "炒饭", "大碗混沌", "烤肉饭"};
+    //
+    private String[] canteensArray = {"玫瑰一楼", "玫瑰二楼", "玫瑰二楼", "玫瑰二楼"};
+    //
+    private String[] dishNumArray = {"dish1", "dish2", "dish3", "dish4", "dish5", "dish6", "dish7", "dish8", "dish9", "dish10"};
+    //
+    private String[] dishId = {"211", "187", "192", "201", "188"};
+    //
+    private String[] restaurantId = {"15", "15", "30", "30", "38"};
+    //
+    private String dishNum="3";
     private int intDisuhNumber;
     private String demoDishes;
     private String intentMessage;
