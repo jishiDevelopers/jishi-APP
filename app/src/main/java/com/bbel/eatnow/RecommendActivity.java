@@ -2,6 +2,7 @@ package com.bbel.eatnow;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -36,19 +37,19 @@ public class RecommendActivity extends AppCompatActivity implements View.OnClick
     private CardFragmentPagerAdapter1 mFragmentCardAdapter;
     private ShadowTransformer1 mFragmentCardShadowTransformer1;
     private boolean mShowingFragments = false;
-    private String[] restaurantArray= {"兰州拉面", "腊么香", "千里香混沌", "酷乐吧"};
-    //
-    private String[] dishesArray={"炒面", "炒饭", "大碗混沌", "烤肉饭"};
-    //
+    /* 初始值可删 */
+    private String[] restaurantArray = {"兰州拉面", "腊么香", "千里香混沌", "酷乐吧"};
+    /* 初始值可删 */
+    private String[] dishesArray = {"炒面", "炒饭", "大碗混沌", "烤肉饭"};
+    /* 初始值可删 */
     private String[] canteensArray = {"玫瑰一楼", "玫瑰二楼", "玫瑰二楼", "玫瑰二楼"};
-    //
+    /* 初始值可删 */
     private String[] dishNumArray = {"dish1", "dish2", "dish3", "dish4", "dish5", "dish6", "dish7", "dish8", "dish9", "dish10"};
-    //
+    /* 初始值可删 */
     private String[] dishId = {"211", "187", "192", "201", "188"};
-    //
+    /* 初始值可删 */
     private String[] restaurantId = {"15", "15", "30", "30", "38"};
-    //
-    private String dishNum="3";
+    private String dishNum = "3";
     private int intDisuhNumber;
     private String demoDishes;
     private String intentMessage;
@@ -73,15 +74,16 @@ public class RecommendActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_recommend);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mCardAdapter = new CardPagerAdapter1();
-
+        //SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
         /*
-            获取上个活动数据并解析
-             Intent intent =getIntent();
-      intentMessage=intent.getStringExtra("");
-      parseJSONWithJSONObject(intentMessage);
+        读取文件
          */
-
-
+        SharedPreferences userMessage = getSharedPreferences("user", MODE_PRIVATE);
+        token = userMessage.getString("token", "");
+        userId = userMessage.getString("id", "");
+        SharedPreferences resultMessage = getSharedPreferences("result", MODE_PRIVATE);
+        intentMessage = resultMessage.getString("result", "");
+        parseJSONWithJSONObject(intentMessage);
         for (int i = 0; i < Integer.parseInt(dishNum); i++) {
             String number = Integer.toString(i + 1);
             mCardAdapter.addCardItem(new CardItem1(setDemoRestaurant(restaurantArray[i], canteensArray[i]), setDemoDishes(dishesArray[i]), number));
@@ -196,7 +198,7 @@ public class RecommendActivity extends AppCompatActivity implements View.OnClick
         okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .build();
         PostMessage postMessage = new PostMessage();
         postMessage.setFinalChoice(dishId[i]);
