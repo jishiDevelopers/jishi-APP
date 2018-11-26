@@ -169,14 +169,15 @@ public class MapView extends View {
                 Element personNode = (Element) paths.item(i);
                 //得到android:pathData属性值
                 String nodeValue = personNode.getAttribute("android:pathData");
-//                        String name = personNode.getAttribute("android:name");
+//                String name = personNode.getAttribute("android:name");
                 //解析，并创建pathItem
                 item = new PathItem(PathParser.createPathFromPathData(nodeValue));
+//                item.setName(name);
                 pathItems.add(item);
             }
-            Log.e(TAG, "蜗牛   itemsCount  " + pathItems.size());
+            Log.e(TAG, "itemsCount  " + pathItems.size());
         } catch (Exception e) {
-            Log.e(TAG, "蜗牛   解析出错 ");
+            Log.e(TAG, "解析出错 ");
         }
         return pathItems;
     }
