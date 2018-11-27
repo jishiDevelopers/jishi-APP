@@ -11,7 +11,11 @@
     <string name="Next_R">注册</string>
     <string name="Next_F">重置</string>
     <string name="register">注册</string>
-    <string name="send">发送验证码</string>
+    <string name="send">请进行短信验证</string>
     <string name="code">请输入验证码</string>
+    <string name="finish">我选完啦</string>
+    <string name="space"> </string>
+    <string name="yes">yes</string>
+    <string name="no">no</string>
 
 </resources>
