@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.bbel.eatnow.R;
 
-public class LoginSuccessActivity extends AppCompatActivity {
+public class LoginSuccessActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

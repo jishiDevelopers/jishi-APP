@@ -33,7 +33,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RecommendActivity extends AppCompatActivity implements View.OnClickListener,
+public class RecommendActivity extends BaseActivity implements View.OnClickListener,
         CompoundButton.OnCheckedChangeListener {
 
     private ViewPager mViewPager;

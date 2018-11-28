@@ -30,7 +30,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class QuestionActivity extends AppCompatActivity implements View.OnClickListener{
+public class QuestionActivity extends BaseActivity implements View.OnClickListener{
 
     private Button button_yes;
     private Button button_no;

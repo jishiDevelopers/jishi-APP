@@ -35,7 +35,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private EditText userTel;
     private EditText userPasswd;
@@ -271,6 +271,12 @@ public class LoginActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         hHandler.removeCallbacksAndMessages(null);
+    }
+
+
+    // TODO 修改判断逻辑
+    private boolean isLogin() {
+        return true;
     }
 }
 

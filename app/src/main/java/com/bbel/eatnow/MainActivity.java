@@ -40,12 +40,13 @@ import com.baidu.mapapi.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     DrawerLayout mDrawerLayout;
     MapView mapView;
     BaiduMap mBaiduMap;
     LocationClient mLocationClient;
+    LatLng currentLocation;
     BitmapDescriptor bitmapDescriptor;
     Overlay myLocationOverlay;
     boolean isFirst = true;
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
             LatLng ll = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
+            currentLocation = ll;
             if (isFirst) {
                 moveTo(ll);
                 isFirst = false;

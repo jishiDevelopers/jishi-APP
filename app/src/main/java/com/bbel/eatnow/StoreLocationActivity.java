@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import java.lang.ref.WeakReference;
 
-public class StoreLocationActivity extends AppCompatActivity {
+public class StoreLocationActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
