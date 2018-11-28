@@ -21,8 +21,5 @@
         <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
         <item name="colorControlActivated">#FFCC00</item>
     </style>
-
-    <style name="ButtonStyle" parent="Base.Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/colorAccent</item>
-    </style>
+    
 </resources>
