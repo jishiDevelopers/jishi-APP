@@ -1,7 +1,12 @@
 package com.bbel.eatnow;
 
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import java.lang.ref.WeakReference;
 
 public class StoreLocationActivity extends AppCompatActivity {
 
