@@ -1,10 +1,12 @@
-package com.bbel.eatnow;
+package com.bbel.eatnow.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.widget.CardView;
 import android.view.ViewGroup;
+
+import com.bbel.eatnow.fragment.CardFragment1;
 
 import java.util.ArrayList;
 import java.util.List;

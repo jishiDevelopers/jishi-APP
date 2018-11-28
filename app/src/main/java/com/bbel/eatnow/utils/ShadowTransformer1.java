@@ -1,8 +1,10 @@
-package com.bbel.eatnow;
+package com.bbel.eatnow.utils;
 
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.view.View;
+
+import com.bbel.eatnow.adapter.CardAdapter1;
 
 
 public class ShadowTransformer1 implements ViewPager.OnPageChangeListener, ViewPager.PageTransformer {

@@ -1,4 +1,4 @@
-package com.bbel.eatnow;
+package com.bbel.eatnow.adapter;
 
 
 import android.support.v4.view.PagerAdapter;
@@ -7,6 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.bbel.eatnow.R;
+import com.bbel.eatnow.adapter.CardAdapter1;
+import com.bbel.eatnow.bean.CardItem1;
 
 import java.util.ArrayList;
 import java.util.List;

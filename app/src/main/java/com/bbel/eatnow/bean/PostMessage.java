@@ -1,4 +1,4 @@
-package com.bbel.eatnow;
+package com.bbel.eatnow.bean;
 
 
 public class PostMessage {

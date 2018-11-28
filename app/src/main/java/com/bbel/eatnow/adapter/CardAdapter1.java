@@ -1,4 +1,4 @@
-package com.bbel.eatnow;
+package com.bbel.eatnow.adapter;
 
 import android.support.v7.widget.CardView;
 
