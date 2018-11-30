@@ -116,6 +116,7 @@ public class LoginActivity extends BaseActivity {
 
         if (isLogin()) {
             startActivity(new Intent(this, MainActivity.class));
+            finish();
         }
 
         hHandler = new HHanlder();
