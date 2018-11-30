@@ -365,11 +365,15 @@ public class QuestionActivity extends BaseActivity implements View.OnClickListen
                 }
                 break;
             case R.id.btn_go:
-                if(getDishWithOkHttp() == true) {
+                // TODO: 2018/11/30 添加回调
+                if(getDishWithOkHttp()) {
                     ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(QuestionActivity.this);
-                    //Intent i2 = new Intent(QuestionActivity.this,RecommendActivity.class);
-                    //startActivity(i2, oc2.toBundle());
+//                    Intent i2 = new Intent(QuestionActivity.this, RecommendActivity.class);
+//                    startActivity(i2, oc2.toBundle());
                 }
+                ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(QuestionActivity.this);
+                Intent i2 = new Intent(QuestionActivity.this, RecommendActivity.class);
+                startActivity(i2, oc2.toBundle());
                 break;
             default:
                 break;

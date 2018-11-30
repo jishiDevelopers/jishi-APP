@@ -114,6 +114,10 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        if (isLogin()) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+
         hHandler = new HHanlder();
         initView();
         setListener();
@@ -259,7 +263,8 @@ public class LoginActivity extends BaseActivity {
                         editor.apply();
                         //跳转页面
                         ActivityOptionsCompat oc1 = ActivityOptionsCompat.makeSceneTransitionAnimation(LoginActivity.this);
-                        Intent i1 = new Intent(LoginActivity.this, QuestionActivity.class);
+//                        Intent i1 = new Intent(LoginActivity.this, QuestionActivity.class);
+                        Intent i1 = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(i1, oc1.toBundle());
                     }
                     break;
@@ -274,8 +279,14 @@ public class LoginActivity extends BaseActivity {
     }
 
 
-    // TODO 修改判断逻辑
     private boolean isLogin() {
+
+        SharedPreferences preferences = getSharedPreferences("user", MODE_PRIVATE);
+        String id = preferences.getString("id", "-1");
+        String token = preferences.getString("token", "0");
+        if (id.equals("-1") || token.equals("0")) {
+            return false;
+        }
         return true;
     }
 }

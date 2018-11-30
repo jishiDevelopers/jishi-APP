@@ -1,6 +1,9 @@
 package com.bbel.eatnow;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -35,16 +38,29 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.Overlay;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MainActivity extends BaseActivity {
 
     DrawerLayout mDrawerLayout;
+    Button button;
+
     MapView mapView;
     BaiduMap mBaiduMap;
+
+    LHanlder lHanlder;
+
     LocationClient mLocationClient;
     LatLng currentLocation;
     BitmapDescriptor bitmapDescriptor;
@@ -59,6 +75,9 @@ public class MainActivity extends BaseActivity {
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(new MyLocationListener());
         setContentView(R.layout.activity_main);
+
+        lHanlder = new LHanlder();
+        getStoreLocation();
 
         initWidgets();
         requestPermission();
@@ -84,6 +103,16 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, StoreLocationActivity.class));
             }
+        });
+
+        button = findViewById(R.id.main_button_test);
+        button.setOnClickListener((v) -> {
+            Intent intent = new Intent(this, QuestionActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putDouble("latitude", currentLocation.latitude);
+            bundle.putDouble("longitude", currentLocation.longitude);
+            intent.putExtra("bundle", bundle);
+            startActivity(intent);
         });
 
     }
@@ -118,7 +147,7 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         mapView.onDestroy();
-
+        lHanlder.removeCallbacksAndMessages(null);
     }
 
 
@@ -215,5 +244,108 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    private void getStoreLocation() {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient okHttpClient = new OkHttpClient();
+                    String url = "http://193.112.6.8/map_request";
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .get()
+                            .build();
+                    Response response = okHttpClient.newCall(request).execute();
+                    Message message = new Message();
+                    message.what = 1;
+                    message.obj = response;
+                    lHanlder.sendMessage(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
+    }
+
+
+    private void handleResponse(Response response) {
+        List<StoreLocation> storeLocations = new ArrayList<>();
+        try {
+            String responseData = response.body().string();
+            Gson gson = new Gson();
+            storeLocations = gson.fromJson(responseData, new TypeToken<List<StoreLocation>>() {}.getType());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        for (StoreLocation storeLocation : storeLocations) {
+            LatLng latLng = new LatLng(Double.valueOf(storeLocation.latitude), Double.valueOf(storeLocation.longitude));
+            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_mark);
+            OverlayOptions overlayOptions = new MarkerOptions()
+                    .position(latLng)
+                    .icon(bitmapDescriptor);
+            mBaiduMap.addOverlay(overlayOptions);
+        }
+
+    }
+
+    private class StoreLocation {
+
+        String name;
+
+        String longitude;
+
+        String latitude;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(String longitude) {
+            this.longitude = longitude;
+        }
+
+        public String getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(String latitude) {
+            this.latitude = latitude;
+        }
+    }
+
+    private class LHanlder extends Handler {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 1:
+                    Response response = (Response) msg.obj;
+                    if (response.code() == 202) {
+                        handleResponse(response);
+                    } else {
+                        Log.d("storeData", "get data failed");
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+        }
+    }
+
 
 }
+
