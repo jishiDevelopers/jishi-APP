@@ -47,6 +47,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -77,7 +84,6 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
 
         lHanlder = new LHanlder();
-        getStoreLocation();
 
         initWidgets();
         requestPermission();
@@ -87,6 +93,8 @@ public class MainActivity extends BaseActivity {
     private void initWidgets() {
         mapView = findViewById(R.id.mmap);
         mBaiduMap = mapView.getMap();
+
+        getStoreLocation();
 
         mDrawerLayout = findViewById(R.id.main_drawer_layout);
         ActionBar actionBar = getSupportActionBar();
@@ -259,7 +267,8 @@ public class MainActivity extends BaseActivity {
                     Response response = okHttpClient.newCall(request).execute();
                     Message message = new Message();
                     message.what = 1;
-                    message.obj = response;
+                    message.obj = response.body().string();
+                    message.arg1 = response.code();
                     lHanlder.sendMessage(message);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -271,25 +280,24 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private void handleResponse(Response response) {
-        List<StoreLocation> storeLocations = new ArrayList<>();
+    private void handleResponse(String receiveData) {
         try {
-            String responseData = response.body().string();
+            List<StoreLocation> storeLocations;
+            String responseData = receiveData;
             Gson gson = new Gson();
             storeLocations = gson.fromJson(responseData, new TypeToken<List<StoreLocation>>() {}.getType());
 
+            for (StoreLocation storeLocation : storeLocations) {
+                LatLng latLng = new LatLng(Double.valueOf(storeLocation.latitude), Double.valueOf(storeLocation.longitude));
+                BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_mark);
+                OverlayOptions overlayOptions = new MarkerOptions()
+                        .position(latLng)
+                        .icon(bitmapDescriptor);
+                mBaiduMap.addOverlay(overlayOptions);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        for (StoreLocation storeLocation : storeLocations) {
-            LatLng latLng = new LatLng(Double.valueOf(storeLocation.latitude), Double.valueOf(storeLocation.longitude));
-            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_mark);
-            OverlayOptions overlayOptions = new MarkerOptions()
-                    .position(latLng)
-                    .icon(bitmapDescriptor);
-            mBaiduMap.addOverlay(overlayOptions);
-        }
-
     }
 
     private class StoreLocation {
@@ -332,11 +340,11 @@ public class MainActivity extends BaseActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 1:
-                    Response response = (Response) msg.obj;
-                    if (response.code() == 202) {
-                        handleResponse(response);
+                    String responseData = (String) msg.obj;
+                    if (msg.arg1 == 202) {
+                        handleResponse(responseData);
                     } else {
-                        Log.d("storeData", "get data failed");
+                        Log.d("getLocation", "get data failed");
                     }
                     break;
                 default:
