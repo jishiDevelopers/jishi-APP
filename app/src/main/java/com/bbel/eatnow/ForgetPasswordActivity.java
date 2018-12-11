@@ -386,18 +386,18 @@ public class ForgetPasswordActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             if(msg.what==1){
                 if(time>0){
-                    now.setText("验证码已发送"+time+"秒");
+                    now.setText("已发送"+time+"秒");
                     time--;
                     handlerText.sendEmptyMessageDelayed(1, 1000);
                 }else{
-                    now.setText("提示信息");
+                    //now.setText("提示信息");
                     time = 60;
                     now.setVisibility(View.GONE);
                     buttonSend.setVisibility(View.VISIBLE);
                 }
             }else{
                 userCode.setText("");
-                now.setText("提示信息");
+                //now.setText("提示信息");
                 time = 60;
                 now.setVisibility(View.GONE);
                 buttonSend.setVisibility(View.VISIBLE);
