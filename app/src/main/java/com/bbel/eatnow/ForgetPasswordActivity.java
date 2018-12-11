@@ -3,15 +3,13 @@ package com.bbel.eatnow;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -26,24 +24,24 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.mob.MobSDK;
 
-import java.util.HashMap;
-
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static com.mob.tools.utils.ResHelper.getStringRes;
+
 public class ForgetPasswordActivity extends BaseActivity {
 
     private EditText userTel;
     private EditText userPasswd;
     private EditText userPasswdRepeat;
-    private EditText userCode;
     private Button buttonSend;
+    private EditText userCode;
+    private TextView now;
 
     private String user_tel;
     private String user_passwd;
@@ -57,6 +55,11 @@ public class ForgetPasswordActivity extends BaseActivity {
     private CardView forget;
     private Button buttonReset;
     private String url = "http://193.112.6.8/password_forget";
+
+    private String iPhone;
+    private String iCord;
+    private int time = 60;
+    private boolean flag = true;
 
     public class Data {
         private String id;
@@ -118,13 +121,19 @@ public class ForgetPasswordActivity extends BaseActivity {
 
         //初始化MobSDK
         MobSDK.init(this);
-
-        fab.setOnClickListener(new View.OnClickListener() {
+        EventHandler eh=new EventHandler(){
             @Override
-            public void onClick(View v) {
-                animateRevealClose();
+            public void afterEvent(int event, int result, Object data) {
+
+                Message msg = new Message();
+                msg.arg1 = event;
+                msg.arg2 = result;
+                msg.obj = data;
+                handler.sendMessage(msg);
             }
-        });
+
+        };
+        SMSSDK.registerEventHandler(eh);
     }
 
     private void initView() {
@@ -133,9 +142,10 @@ public class ForgetPasswordActivity extends BaseActivity {
         buttonReset = findViewById(R.id.bt_go);
         buttonSend = findViewById(R.id.button_send);
         userTel = findViewById(R.id.et_username);
-        //userCode = findViewById(R.id.et_code);
+        userCode = findViewById(R.id.et_code);
         userPasswd = findViewById(R.id.et_password);
         userPasswdRepeat = findViewById(R.id.et_repeat_password);
+        now = findViewById(R.id.now);
     }
 
     private void setListener() {
@@ -144,6 +154,20 @@ public class ForgetPasswordActivity extends BaseActivity {
             public void onClick(View view) {
                 getWindow().setExitTransition(null);
                 getWindow().setEnterTransition(null);
+
+                if(!TextUtils.isEmpty(userCode.getText().toString().trim())){
+                    if(userCode.getText().toString().trim().length()==4){
+                        iCord = userCode.getText().toString().trim();
+                        SMSSDK.submitVerificationCode("86", iPhone, iCord);
+                        flag = false;
+                    }else{
+                        Toast.makeText(ForgetPasswordActivity.this, "请输入完整验证码", Toast.LENGTH_LONG).show();
+                        userCode.requestFocus();
+                    }
+                }else{
+                    Toast.makeText(ForgetPasswordActivity.this, "请输入验证码", Toast.LENGTH_LONG).show();
+                    userCode.requestFocus();
+                }
 
                 user_tel = userTel.getText().toString();
                 user_passwd = userPasswd.getText().toString();
@@ -156,23 +180,40 @@ public class ForgetPasswordActivity extends BaseActivity {
                 } else if(user_passwd.isEmpty() && user_passwd_repeat.isEmpty()) {
                     Toast.makeText(ForgetPasswordActivity.this, "密码不能为空",
                             Toast.LENGTH_SHORT).show();
-                }else if(user_passwd.equals(user_passwd_repeat) && code == true) {
-                    sendRequestWithOkHttp();
-                }else if(user_passwd.equals(user_passwd_repeat) && code == false) {
-                    Toast.makeText(ForgetPasswordActivity.this, "请进行短信验证",
-                            Toast.LENGTH_SHORT).show();
                 }
                 else if(!user_passwd.equals(user_passwd_repeat)) {
                     Toast.makeText(ForgetPasswordActivity.this, "密码输入不一致",
                             Toast.LENGTH_SHORT).show();
+                }else {
+                    sendRequestWithOkHttp();
                 }
             }
         });
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
+            public void onClick(View view) {
+                if(!TextUtils.isEmpty(userTel.getText().toString().trim())){
+                    if(userTel.getText().toString().trim().length()==11){
+                        iPhone = userTel.getText().toString().trim();
+                        SMSSDK.getVerificationCode("86",iPhone);
+                        userCode.requestFocus();
+                        buttonSend.setVisibility(View.GONE);
+                    }else{
+                        Toast.makeText(ForgetPasswordActivity.this, "请输入完整电话号码", Toast.LENGTH_LONG).show();
+                        userTel.requestFocus();
+                    }
+                }else{
+                    Toast.makeText(ForgetPasswordActivity.this, "请输入您的电话号码", Toast.LENGTH_LONG).show();
+                    userTel.requestFocus();
+                }
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                sendCode(ForgetPasswordActivity.this);
+                animateRevealClose();
             }
         });
     }
@@ -276,7 +317,7 @@ public class ForgetPasswordActivity extends BaseActivity {
                             .build();
                     Response response = client.newCall(request).execute();
                     http_code = response.code();
-                    Log.d("RegisterActivity1", "code is " + http_code);
+                    //Log.d("RegisterActivity1", "code is " + http_code);
                     String responseData = response.body().string();
                     parseJSONWithGSON(responseData);
                 } catch (Exception e) {
@@ -289,10 +330,11 @@ public class ForgetPasswordActivity extends BaseActivity {
     private void parseJSONWithGSON(String jsonData){
         Gson gson = new Gson();
         Data data = gson.fromJson(jsonData, Data.class);
+/*
         String info = data.getInfo();
         String id = data.getId();
         String token = data.getToken();
-/*
+
         Log.d("RegisterActivity1", "info is " + info);
         Log.d("RegisterActivity1", "id is " + id);
         Log.d("RegisterActivity1", "token is " + token);
@@ -305,28 +347,6 @@ public class ForgetPasswordActivity extends BaseActivity {
         hHandler.sendMessage(message);
     }
 
-    public void sendCode(Context context) {
-        RegisterPage page = new RegisterPage();
-        //如果使用我们的ui，没有申请模板编号的情况下需传null
-        page.setTempCode(null);
-        page.setRegisterCallback(new EventHandler() {
-            public void afterEvent(int event, int result, Object data) {
-                if (result == SMSSDK.RESULT_COMPLETE) {
-                    // 处理成功的结果
-                    HashMap<String,Object> phoneMap = (HashMap<String, Object>) data;
-                    String country = (String) phoneMap.get("country"); // 国家代码，如“86”
-                    String phone = (String) phoneMap.get("phone"); // 手机号码，如“13800138000”
-                    code = true;
-                    // TODO 利用国家代码和手机号码进行后续的操作
-                } else{
-                    // TODO 处理错误的结果
-                }
-            }
-        });
-        page.show(context);
-    }
-
-
     private class HHanlder extends Handler {
 
         @Override
@@ -336,28 +356,104 @@ public class ForgetPasswordActivity extends BaseActivity {
                     Bundle bundle = msg.getData();
                     int http_code = bundle.getInt("http_code");
                     //判断HTTP状态码
-                    if(http_code == 200) {
-                        ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(ForgetPasswordActivity.this);
-                        Intent i2 = new Intent(ForgetPasswordActivity.this,LoginActivity.class);
-                        startActivity(i2, oc2.toBundle());
-                        Toast.makeText(ForgetPasswordActivity.this, "重置密码成功",
-                                Toast.LENGTH_SHORT).show();
-                    } else if (http_code == 400){
-                        Toast.makeText(ForgetPasswordActivity.this, "该账号不存在",
-                                Toast.LENGTH_SHORT).show();
-                    } else if(http_code == 402) {
-                        Toast.makeText(ForgetPasswordActivity.this, "请重新获取验证码",
-                                Toast.LENGTH_SHORT).show();
+                    if(code == true) {
+                        if(http_code == 200) {
+                            ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(ForgetPasswordActivity.this);
+                            Intent i2 = new Intent(ForgetPasswordActivity.this,LoginActivity.class);
+                            startActivity(i2, oc2.toBundle());
+                            Toast.makeText(ForgetPasswordActivity.this, "重置密码成功",
+                                    Toast.LENGTH_SHORT).show();
+                        } else if (http_code == 400){
+                            Toast.makeText(ForgetPasswordActivity.this, "该账号不存在",
+                                    Toast.LENGTH_SHORT).show();
+                        } else if(http_code == 402) {
+                            Toast.makeText(ForgetPasswordActivity.this, "请重新获取验证码",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                     break;
             }
         }
     }
 
+    //验证码送成功后提示文字
+    private void reminderText() {
+        now.setVisibility(View.VISIBLE);
+        handlerText.sendEmptyMessageDelayed(1, 1000);
+    }
+
+    Handler handlerText =new Handler(){
+        public void handleMessage(Message msg) {
+            if(msg.what==1){
+                if(time>0){
+                    now.setText("验证码已发送"+time+"秒");
+                    time--;
+                    handlerText.sendEmptyMessageDelayed(1, 1000);
+                }else{
+                    now.setText("提示信息");
+                    time = 60;
+                    now.setVisibility(View.GONE);
+                    buttonSend.setVisibility(View.VISIBLE);
+                }
+            }else{
+                userCode.setText("");
+                now.setText("提示信息");
+                time = 60;
+                now.setVisibility(View.GONE);
+                buttonSend.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+    Handler handler=new Handler(){
+
+        @Override
+        public void handleMessage(Message msg) {
+            // TODO Auto-generated method stub
+            super.handleMessage(msg);
+            int event = msg.arg1;
+            int result = msg.arg2;
+            Object data = msg.obj;
+            Log.e("event", "event="+event);
+
+            if (result == SMSSDK.RESULT_COMPLETE) {
+                //短信注册成功后，返回MainActivity,然后提示新好友
+                if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {//提交验证码成功,验证通过
+                    //Toast.makeText(getApplicationContext(), "验证码校验成功", Toast.LENGTH_SHORT).show();
+                    code = true;
+                    handlerText.sendEmptyMessage(2);
+                } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){//服务器验证码发送成功
+                    reminderText();
+                    Toast.makeText(getApplicationContext(), "验证码已经发送", Toast.LENGTH_SHORT).show();
+                }else if (event ==SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES){//返回支持发送验证码的国家列表
+                    Toast.makeText(getApplicationContext(), "获取国家列表成功", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                if(flag){
+                    buttonSend.setVisibility(View.VISIBLE);
+                    Toast.makeText(ForgetPasswordActivity.this, "验证码获取失败，请重新获取", Toast.LENGTH_SHORT).show();
+                    userTel.requestFocus();
+                }else{
+                    ((Throwable) data).printStackTrace();
+                    int resId = getStringRes(ForgetPasswordActivity.this, "smssdk_network_error");
+                    Toast.makeText(ForgetPasswordActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
+                    userCode.selectAll();
+/*                    if (resId > 0) {
+                        Toast.makeText(ForgetPasswordActivity.this, resId, Toast.LENGTH_SHORT).show();
+                    }*/
+                }
+
+            }
+
+        }
+
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         hHandler.removeCallbacksAndMessages(null);
+        SMSSDK.unregisterAllEventHandler();
     }
 
 }
