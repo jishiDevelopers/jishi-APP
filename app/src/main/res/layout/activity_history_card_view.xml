@@ -18,63 +18,41 @@
         android:background="#fafafa">
 
         <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:id="@+id/title_name"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
             android:background="#eceff1"
             android:paddingLeft="5dp"
-            android:text="contact information"
+            android:text="title name"
             android:textColor="#000000"
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/text_dish_list"
+            android:id="@+id/time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:gravity="center_vertical"
+            android:layout_height="45dp"
+            android:layout_marginLeft="230dp"
+            android:layout_marginTop="5dp"
             android:padding="3dp"
-            android:text="dish_list"
+            android:text="time"
             android:textColor="#2979ff"
             android:textSize="12sp" />
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/title_name"
+            android:paddingLeft="5dp"
+            android:layout_marginLeft="200dp"
+            android:background="@drawable/good"/>
+        <ImageButton
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/title_name"
+            android:paddingLeft="5dp"
+            android:layout_marginLeft="280dp"
+            android:background="@drawable/bad"
+            />
 
-        <TextView
-            android:id="@+id/text_question_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_dish_list"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:padding="3dp"
-            android:text="question list: "
-            android:textColor="#2979ff"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/text_question_answer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/text_dish_list"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="170dp"
-            android:padding="3dp"
-            android:text="answer "
-            android:textColor="#2979ff"
-            android:textSize="12sp" />
-        <TextView
-            android:id="@+id/text_final_choose"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_question_answer"
-            android:layout_alignBaseline="@id/text_question_list"
-            android:layout_marginLeft="170dp"
-            android:layout_marginTop="10dp"
-            android:padding="3dp"
-            android:text="question choose: "
-            android:textColor="#2979ff"
-            android:textSize="12sp" />
 
 
     </RelativeLayout>
