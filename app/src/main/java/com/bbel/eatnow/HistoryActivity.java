@@ -18,7 +18,9 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -44,11 +46,11 @@ public class HistoryActivity extends AppCompatActivity {
     /**
      * 评价结果
      */
-    private String[] judgeArray ;
+    private String[] judgeArray;
     /**
      * 时间戳
      */
-    private String[] timeArray ;
+    private String[] timeArray;
     private String record = "record";
     private String[] recordArray;
     List<ContactInfo> mList = new ArrayList<>();
@@ -65,7 +67,7 @@ public class HistoryActivity extends AppCompatActivity {
         /**
          * 初始化适配器
          */
-        adapter=new MyAdapter(mList);
+        adapter = new MyAdapter(mList);
         mRecyclerView.setAdapter(adapter);
         //发送POST
         sendRequestWithOkHttp();
@@ -122,25 +124,29 @@ public class HistoryActivity extends AppCompatActivity {
             this.contactInfoList = contactInfoList;
         }
 
+        public void addData(List<ContactInfo> contacts) {
+            this.contactInfoList = contacts;
+            notifyDataSetChanged();
+        }
+
         //重写3个抽象方法
-//onCreateViewHolder()方法 返回我们自定义的 ContactViewHolder对象
+        //onCreateViewHolder()方法 返回我们自定义的 ContactViewHolder对象
+        @NonNull
         @Override
-        public ContactViewHolder onCreateViewHolder
-        (ViewGroup parent, int viewType) {
+        public ContactViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View itemView = LayoutInflater.from(parent.getContext()).
                     inflate(R.layout.activity_history_card_view, parent, false);
             return new ContactViewHolder(itemView);
         }
 
         @Override
-        public void onBindViewHolder
-                (ContactViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
 
-//contactInfoList中包含的都是ContactInfo类的对象
-//通过其get()方法可以获得其中的对象
+            //contactInfoList中包含的都是ContactInfo类的对象
+            //通过其get()方法可以获得其中的对象
             ContactInfo ci = contactInfoList.get(position);
 
-//将viewholder中hold住的各个view与数据源进行绑定(bind)
+            //将viewholder中hold住的各个view与数据源进行绑定(bind)
             //定义文本内容
             holder.vTime.setText(ci.timeIs);
             holder.vTitle.setText(ci.finalChoose);
@@ -153,8 +159,8 @@ public class HistoryActivity extends AppCompatActivity {
         }
 
         class ContactViewHolder extends RecyclerView.ViewHolder {
-            protected TextView vTitle;
-            protected TextView vTime;
+            private TextView vTitle;
+            private TextView vTime;
 
             public ContactViewHolder(View itemView) {
                 super(itemView);
@@ -165,26 +171,16 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void initInfo() {
-        ContactInfo [] elementArray = new ContactInfo[intRecordNumber];
+        ContactInfo[] elementArray = new ContactInfo[intRecordNumber];
 //        测试数据
 //        ContactInfo [] element =new  ContactInfo[10];  之后用数组
         /**
          * 初始化
          */
-        for(int i=intRecordNumber-1;i>=0;i++){
-            elementArray[i]=new ContactInfo(finalChooseArray[i],timeArray[i]);
+        for (int i = intRecordNumber - 1; i >= 0; i--) {
+            elementArray[i] = new ContactInfo(finalChooseArray[i], timeArray[i]);
             mList.add(elementArray[i]);
         }
-//        ContactInfo element1 = new ContactInfo("菜品名", "时间戳");
-//        mList.add(element1);
-//        ContactInfo element2 = new ContactInfo("菜品名", "时间戳");
-//        mList.add(element2);
-//        ContactInfo element3 = new ContactInfo("菜品名", "时间戳");
-//        mList.add(element3);
-//        ContactInfo element4 = new ContactInfo("菜品名", "时间戳");
-//        mList.add(element4);
-//        ContactInfo element5 = new ContactInfo("菜品名", "时间戳");
-//        mList.add(element5);
 
     }
 
@@ -196,12 +192,13 @@ public class HistoryActivity extends AppCompatActivity {
                  * 记录个数
                  */
                 intRecordNumber = Integer.parseInt(jsonObject.getString("recordNum"));
+                Log.d("IntRecodNumber", Integer.toString(intRecordNumber));
                 /**
                  * 开数组
                  */
-                judgeArray=new String[intRecordNumber];
-                finalChooseArray=new String[intRecordNumber];
-                timeArray=new String[intRecordNumber];
+                judgeArray = new String[intRecordNumber];
+                finalChooseArray = new String[intRecordNumber];
+                timeArray = new String[intRecordNumber];
 
                 /**
                  * 构造record数组
@@ -211,7 +208,7 @@ public class HistoryActivity extends AppCompatActivity {
                     recordArray[i] = record + Integer.toString(i);
                 }
 
-                Log.d("ABCD",recordArray[0]);//
+                Log.d("ABCD", recordArray[0]);//
                 /**
                  对recordX赋值,获取finalChoice,judge,data.其中"**X"的是代表有再嵌套内容
                  */
@@ -224,7 +221,10 @@ public class HistoryActivity extends AppCompatActivity {
                     judgeArray[i] = messageRecordX.getString("judge");
                     messageTime = messageRecordX.getString("time");
                     JSONObject messageTimeX = new JSONObject(messageTime);
-                    timeArray[i] = messageTimeX.getString("date");
+//                    //格式转换
+//                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
+//                    timeArray[i]= format.format(messageTimeX.getString("date")) ;
+                    timeArray[i]=messageTimeX.getString("date");
                 }
             }
         } catch (Exception e) {
@@ -242,17 +242,15 @@ public class HistoryActivity extends AppCompatActivity {
             SharedPreferences pref = getSharedPreferences("user", MODE_PRIVATE);
             String user_id = pref.getString("id", "0");
             String token = pref.getString("token", "0");
+            Log.d("userId:", user_id);
+            Log.d("token:", token);
             User user = new User();
             user.setUser_id(user_id);
             user.setToken(token);
-//
-//                    SharedPreferences.Editor editor = getSharedPreferences("question_answer", MODE_PRIVATE).edit();
-//                    editor.putString("id", user_id);
-//                    editor.putString("token", token);
-//                    editor.apply();
             OkHttpClient client = new OkHttpClient();
             Gson gson = new Gson();
             String toJson = gson.toJson(user);
+            Log.d("JSON",toJson);
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), toJson);
             Request request = new Request.Builder()
                     .url(url)
@@ -273,25 +271,13 @@ public class HistoryActivity extends AppCompatActivity {
 
                 @Override
                 public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                    /**
-                     * 异步回调，获取内容
-                     */
-                    runOnUiThread(()-> {
-                        try {
-                            responseData = response.body().string();
-                            httpCode = response.code();
-                            parseJSONWithJSONObject(responseData);
-//实例化MyAdapter并传入mList对象
-                            initInfo();
-                            adapter = new MyAdapter(mList);
-                            adapter.notifyDataSetChanged();
-                            mRecyclerView.setAdapter(adapter);
-//为RecyclerView对象mRecyclerView设置adapter
-                        }catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
+                     //异步回调，获取内容
+                    responseData = response.body().string();
+                    httpCode = response.code();
+                    parseJSONWithJSONObject(responseData);
+                    //实例化MyAdapter并传入mList对象
+                    initInfo();
+                    runOnUiThread(()-> adapter.addData(mList));
                 }
             });
         } catch (Exception e) {
@@ -300,7 +286,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     public class User {
-        private String user_id;
+        private String id;
         private String token;
 
         public String getToken() {
@@ -313,11 +299,11 @@ public class HistoryActivity extends AppCompatActivity {
         }
 
         public String getUser_id() {
-            return user_id;
+            return id;
         }
 
         public void setUser_id(String user_id) {
-            this.user_id = user_id;
+            this.id = user_id;
         }
     }
 }
