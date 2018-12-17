@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/view_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="20dp"
+    android:elevation="4dp"
+    android:orientation="vertical"
+    app:cardCornerRadius="4dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:alpha="0.8"
+        android:background="#fafafa">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#eceff1"
+            android:paddingLeft="5dp"
+            android:text="contact information"
+            android:textColor="#000000"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_dish_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center_vertical"
+            android:padding="3dp"
+            android:text="dish_list"
+            android:textColor="#2979ff"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/text_question_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_dish_list"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:padding="3dp"
+            android:text="question list: "
+            android:textColor="#2979ff"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/text_question_answer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/text_dish_list"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="170dp"
+            android:padding="3dp"
+            android:text="answer "
+            android:textColor="#2979ff"
+            android:textSize="12sp" />
+        <TextView
+            android:id="@+id/text_final_choose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_question_answer"
+            android:layout_alignBaseline="@id/text_question_list"
+            android:layout_marginLeft="170dp"
+            android:layout_marginTop="10dp"
+            android:padding="3dp"
+            android:text="question choose: "
+            android:textColor="#2979ff"
+            android:textSize="12sp" />
+
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>
