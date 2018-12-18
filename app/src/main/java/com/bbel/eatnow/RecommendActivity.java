@@ -2,11 +2,13 @@ package com.bbel.eatnow;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -114,6 +116,8 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             case R.id.take_me_go: {
                 String item = Integer.toString(mViewPager.getCurrentItem());
                 int i = Integer.valueOf(item);
+                Intent intent =new Intent(RecommendActivity.this,HistoryActivity.class);
+                startActivity(intent);
                 //Log.d("第几页啊:", item);
                 postRequest(i);
                 switch (httpCode) {
@@ -180,7 +184,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                     intDisuhNumber = 10;
                 }
                 Log.d("W",jsonObject.getString("dishNum"));
-
                 idRecord = jsonObject.getString("idRecord");
                 for (int i = 0; i < intDisuhNumber; i++) {
                     String message;
@@ -199,8 +202,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     }
     private void postRequest(int i) {
         String postURL = "http://193.112.6.8/record_store";
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient = new OkHttpClient.Builder()
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
