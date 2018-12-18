@@ -18,9 +18,7 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import okhttp3.Call;
@@ -47,6 +45,12 @@ public class HistoryActivity extends AppCompatActivity {
      * 评价结果
      */
     private String[] judgeArray;
+    /**
+     * 食堂名
+     */
+    private String[] canteenArray;
+
+    private String [] restNameArray;
     /**
      * 时间戳
      */
@@ -86,22 +90,23 @@ public class HistoryActivity extends AppCompatActivity {
     public class ContactInfo {
         protected String timeIs = "辣不辣";
         protected String finalChoose = "这一家";
-//        protected static final String DISH_NAME_RECOMMEND = "推荐的菜是";
-//        protected static final String QUESTION_NAME = "问题是";
-//        protected static final String TIME_IS = "时间戳";
-//        protected static final String FINAL_CHOOSE="";
+        protected String canteenName;
+        protected String restName;
 
-        public ContactInfo(String finalChoose, String timeIs) {
+        public ContactInfo(String finalChoose, String timeIs,String canteenName,String restName) {
             this.timeIs = timeIs;
             this.finalChoose = finalChoose;
+            this.canteenName=canteenName;
+            this.restName=restName;
             //自己添加
         }
     }
 
     class ContactViewHolder extends RecyclerView.ViewHolder {
         //create the viewHolder class
-        protected TextView vTitle;
-        protected TextView timestamp;
+        private TextView vTitle;
+        private TextView timestamp;
+        private TextView vRestName;
 
         public ContactViewHolder(View itemView) {
             super(itemView);
@@ -109,6 +114,7 @@ public class HistoryActivity extends AppCompatActivity {
             timestamp = itemView.findViewById(R.id.time);
             //小栏目标题
             vTitle = itemView.findViewById(R.id.title_name);
+            vRestName=itemView.findViewById(R.id.REST_NAME);
             //可自己选择增添
         }
     }
@@ -146,10 +152,12 @@ public class HistoryActivity extends AppCompatActivity {
             //通过其get()方法可以获得其中的对象
             ContactInfo ci = contactInfoList.get(position);
 
-            //将viewholder中hold住的各个view与数据源进行绑定(bind)
-            //定义文本内容
+            //时间戳
             holder.vTime.setText(ci.timeIs);
+            //菜名
             holder.vTitle.setText(ci.finalChoose);
+            //店名+食堂
+            holder.vRestName.setText(ci.restName+"("+ci.canteenName+")");
         }
 
         //此方法返回列表项的数目
@@ -161,11 +169,13 @@ public class HistoryActivity extends AppCompatActivity {
         class ContactViewHolder extends RecyclerView.ViewHolder {
             private TextView vTitle;
             private TextView vTime;
+            private TextView vRestName;
 
             public ContactViewHolder(View itemView) {
                 super(itemView);
                 vTime = itemView.findViewById(R.id.time);
                 vTitle = itemView.findViewById(R.id.title_name);
+                vRestName=itemView.findViewById(R.id.REST_NAME);
             }
         }
     }
@@ -178,7 +188,7 @@ public class HistoryActivity extends AppCompatActivity {
          * 初始化
          */
         for (int i = intRecordNumber - 1; i >= 0; i--) {
-            elementArray[i] = new ContactInfo(finalChooseArray[i], timeArray[i]);
+            elementArray[i] = new ContactInfo(finalChooseArray[i], timeArray[i],canteenArray[i], restNameArray[i]);
             mList.add(elementArray[i]);
         }
 
@@ -199,6 +209,8 @@ public class HistoryActivity extends AppCompatActivity {
                 judgeArray = new String[intRecordNumber];
                 finalChooseArray = new String[intRecordNumber];
                 timeArray = new String[intRecordNumber];
+                restNameArray=new String [intRecordNumber];
+                canteenArray=new String [intRecordNumber];
 
                 /**
                  * 构造record数组
@@ -208,7 +220,7 @@ public class HistoryActivity extends AppCompatActivity {
                     recordArray[i] = record + Integer.toString(i);
                 }
 
-                Log.d("ABCD", recordArray[0]);//
+                Log.d("ABCD", recordArray[0]);
                 /**
                  对recordX赋值,获取finalChoice,judge,data.其中"**X"的是代表有再嵌套内容
                  */
@@ -219,12 +231,16 @@ public class HistoryActivity extends AppCompatActivity {
                     JSONObject messageRecordX = new JSONObject(message);
                     finalChooseArray[i] = messageRecordX.getString("finalchoice");
                     judgeArray[i] = messageRecordX.getString("judge");
+                    /**
+                    店名、食堂名
+                     */
+                    restNameArray[i]=messageRecordX.getString("restName");
+                    canteenArray[i]=messageRecordX.getString("canteen");
+
                     messageTime = messageRecordX.getString("time");
                     JSONObject messageTimeX = new JSONObject(messageTime);
-//                    //格式转换
-//                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss");
-//                    timeArray[i]= format.format(messageTimeX.getString("date")) ;
-                    timeArray[i]=messageTimeX.getString("date");
+                    //截取时间
+                    timeArray[i]=messageTimeX.getString("date").substring(0,19);
                 }
             }
         } catch (Exception e) {
@@ -256,13 +272,6 @@ public class HistoryActivity extends AppCompatActivity {
                     .url(url)
                     .post(requestBody)
                     .build();
-//                    Response response = client.newCall(request).execute();
-//                    String responseData = response.body().string();
-//                    http_code = response.code();
-//                    /**
-//                    解析
-//                     */
-//                    parseJSONWithJSONObject(responseData);
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(@NonNull Call call, @NonNull IOException e) {
