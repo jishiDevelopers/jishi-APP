@@ -14,6 +14,8 @@ import com.bbel.eatnow.utils.ActivityCollector;
 
 public class BaseActivity extends AppCompatActivity {
 
+    String SERVER_URL = "http://193.112.6.8";
+
     private ForceOfflineReceiver forceOfflineReceiver;
 
     @Override

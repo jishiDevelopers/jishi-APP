@@ -2,6 +2,7 @@ package com.bbel.eatnow;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.GravityCompat;
@@ -9,6 +10,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.Manifest;
@@ -19,7 +22,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -35,10 +42,12 @@ import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -53,9 +62,12 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class MainActivity extends BaseActivity {
@@ -93,6 +105,17 @@ public class MainActivity extends BaseActivity {
     private void initWidgets() {
         mapView = findViewById(R.id.mmap);
         mBaiduMap = mapView.getMap();
+
+        mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // TODO: 2018/12/13 弹出详情
+                Bundle bundle = marker.getExtraInfo();
+                int id = bundle.getInt("id");
+                getStoreDetail(id);
+                return false;
+            }
+        });
 
         getStoreLocation();
 
@@ -259,7 +282,7 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 try {
                     OkHttpClient okHttpClient = new OkHttpClient();
-                    String url = "http://193.112.6.8/map_request";
+                    String url = SERVER_URL + "/map_request";
                     Request request = new Request.Builder()
                             .url(url)
                             .get()
@@ -290,10 +313,15 @@ public class MainActivity extends BaseActivity {
             for (StoreLocation storeLocation : storeLocations) {
                 LatLng latLng = new LatLng(Double.valueOf(storeLocation.latitude), Double.valueOf(storeLocation.longitude));
                 BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_mark);
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", storeLocation.getId());
                 OverlayOptions overlayOptions = new MarkerOptions()
                         .position(latLng)
-                        .icon(bitmapDescriptor);
+                        .icon(bitmapDescriptor)
+                        .extraInfo(bundle);
+                // TODO: 2018/12/13 extraInfo()
                 mBaiduMap.addOverlay(overlayOptions);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -302,11 +330,21 @@ public class MainActivity extends BaseActivity {
 
     private class StoreLocation {
 
+        int id;
+
         String name;
 
         String longitude;
 
         String latitude;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
 
         public String getName() {
             return name;
@@ -354,6 +392,111 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+    private void getStoreDetail(int id) {
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+                OkHttpClient okHttpClient = new OkHttpClient();
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                RequestBody requestBody = RequestBody.create(JSON, "{\"id\":\""+id+"\"}");
+                Request request = new Request.Builder()
+                        .url(SERVER_URL + "/clickOnRedPoint")
+                        .post(requestBody)
+                        .build();
+                Response response = okHttpClient.newCall(request).execute();
+                String responseData = response.body().string();
+//                Log.d("response", response.code() + "");
+//                Log.d("response", responseData);
+                emitter.onNext(responseData);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<String, StoreDetail>() {
+                    @Override
+                    public StoreDetail apply(String s) throws Exception {
+                        Gson gson = new Gson();
+                        return gson.fromJson(s, StoreDetail.class);
+                    }
+                })
+                .subscribe(new Observer<StoreDetail>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(StoreDetail s) {
+                        showPopWindow(getWindow().getDecorView(), s);
+//                        Log.d("response", s.getName());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    private void showPopWindow(View parentView, StoreDetail storeDetail) {
+
+        View view = LayoutInflater.from(MainActivity.this).inflate(R.layout.item_store_detail, null);
+
+        TextView storeName = view.findViewById(R.id.store_name);
+        TextView storeLocation = view.findViewById(R.id.store_location);
+        TextView storeItem = view.findViewById(R.id.store_item);
+
+        storeName.setText(storeDetail.getName());
+        storeLocation.setText(storeDetail.getCanteen());
+        storeItem.setText(storeDetail.getZhaopaicai());
+
+        PopupWindow popupWindow = new PopupWindow(view, WindowManager.LayoutParams.MATCH_PARENT, 400);
+        popupWindow.setFocusable(true);
+        popupWindow.setBackgroundDrawable(getDrawable(R.drawable.popwindow_backgroud));
+        popupWindow.setAnimationStyle(R.style.MyPopupWindow_anim_style);
+        popupWindow.showAtLocation(parentView, Gravity.BOTTOM, 0 , 0);
+
+    }
+
+    private class StoreDetail {
+
+        String name;
+
+        String canteen;
+
+        String zhaopaicai;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCanteen() {
+            return canteen;
+        }
+
+        public void setCanteen(String canteen) {
+            this.canteen = canteen;
+        }
+
+        public String getZhaopaicai() {
+            return zhaopaicai;
+        }
+
+        public void setZhaopaicai(String zhaopaicai) {
+            this.zhaopaicai = zhaopaicai;
+        }
+    }
 
 }
 
