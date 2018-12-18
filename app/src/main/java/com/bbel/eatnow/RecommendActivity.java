@@ -54,8 +54,10 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     private String[] dishNumArray = {"dish0","dish1", "dish2", "dish3", "dish4", "dish5", "dish6", "dish7", "dish8", "dish9", "dish10"};
     /* 初始值可删 */
     private String[] dishId = new String [5];
-    /* 初始值可删 */
+    /**
+     *  初始值可删 */
     private String[] restaurantId = new String [5];
+    private String [] pictureArray = new String [5];
     private int intDisuhNumber;
     private String demoDishes;
     private String intentMessage;
@@ -80,15 +82,18 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.activity_recommend);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mCardAdapter = new CardPagerAdapter1();
-        //SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
-        /*
+        /**
         读取文件
          */
         SharedPreferences userMessage = getSharedPreferences("user", MODE_PRIVATE);
         token = userMessage.getString("token", "");
         userId = userMessage.getString("id", "");
-        SharedPreferences resultMessage = getSharedPreferences("result", MODE_PRIVATE);
-        intentMessage = resultMessage.getString("result", "");
+        //SharedPreferences resultMessage = getSharedPreferences("result", MODE_PRIVATE);
+        Intent getIntent =getIntent();
+        /**
+         *文垚给的信息;
+         */
+        intentMessage=getIntent.getStringExtra("intentMessage");
         parseJSONWithJSONObject(intentMessage);
         for (int i = 0; i < intDisuhNumber; i++) {
             String number = Integer.toString(i + 1);
@@ -116,8 +121,13 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             case R.id.take_me_go: {
                 String item = Integer.toString(mViewPager.getCurrentItem());
                 int i = Integer.valueOf(item);
-//                Intent intent =new Intent(RecommendActivity.this,HistoryActivity.class);
-//                startActivity(intent);
+                /**
+                 * 需要更改活动名
+                 */
+                Intent intent =new Intent(RecommendActivity.this,HistoryActivity.class);
+                intent.putExtra("idRest",restaurantId[i]);
+                intent.putExtra("canteenid",pictureArray[i]);
+               startActivity(intent);
                 //Log.d("第几页啊:", item);
                 postRequest(i);
                 switch (httpCode) {
@@ -194,6 +204,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                     canteensArray[i] = messageDish.getString("canteen");
                     dishId[i] = messageDish.getString("idDish");
                     restaurantId[i] = messageDish.getString("idRest");
+                    pictureArray[i]=messageDish.getString("canteenid");
                 }
             }
         } catch (Exception e) {
