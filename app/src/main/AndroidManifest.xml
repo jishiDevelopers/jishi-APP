@@ -34,7 +34,11 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ForgetPasswordActivity" />
         <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <meta-data
@@ -54,13 +58,7 @@
             android:theme="@style/Translucent" />
         <activity android:name=".LoginSuccessActivity" />
         <activity android:name=".QuestionActivity" />
-        <activity android:name=".RankActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".RankActivity"/>
     </application>
 
 </manifest>
