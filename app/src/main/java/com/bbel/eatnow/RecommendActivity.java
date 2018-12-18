@@ -116,8 +116,8 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             case R.id.take_me_go: {
                 String item = Integer.toString(mViewPager.getCurrentItem());
                 int i = Integer.valueOf(item);
-                Intent intent =new Intent(RecommendActivity.this,HistoryActivity.class);
-                startActivity(intent);
+//                Intent intent =new Intent(RecommendActivity.this,HistoryActivity.class);
+//                startActivity(intent);
                 //Log.d("第几页啊:", item);
                 postRequest(i);
                 switch (httpCode) {
