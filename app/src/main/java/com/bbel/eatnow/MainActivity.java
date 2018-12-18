@@ -2,6 +2,7 @@ package com.bbel.eatnow;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
@@ -35,6 +36,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.http.HttpClient;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -144,6 +146,11 @@ public class MainActivity extends BaseActivity {
             bundle.putDouble("longitude", currentLocation.longitude);
             intent.putExtra("bundle", bundle);
             startActivity(intent);
+        });
+
+        button.setOnLongClickListener((v) -> {
+            getRandomDish();
+            return false;
         });
 
     }
@@ -321,7 +328,6 @@ public class MainActivity extends BaseActivity {
                         .extraInfo(bundle);
                 // TODO: 2018/12/13 extraInfo()
                 mBaiduMap.addOverlay(overlayOptions);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -379,6 +385,7 @@ public class MainActivity extends BaseActivity {
             switch (msg.what) {
                 case 1:
                     String responseData = (String) msg.obj;
+                    Log.d("response", responseData);
                     if (msg.arg1 == 202) {
                         handleResponse(responseData);
                     } else {
@@ -496,6 +503,59 @@ public class MainActivity extends BaseActivity {
         public void setZhaopaicai(String zhaopaicai) {
             this.zhaopaicai = zhaopaicai;
         }
+    }
+
+
+    private void getRandomDish() {
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> emitter) throws Exception {
+
+                SharedPreferences preferences = getSharedPreferences("user", MODE_PRIVATE);
+                String id = preferences.getString("id", "-1");
+                String token = preferences.getString("token", "0");
+
+                OkHttpClient okHttpClient = new OkHttpClient();
+                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+                RequestBody requestBody = RequestBody.create(JSON, "{\"id\":\""+id+"\", \"token\":\""+token+"\"}");
+                Request request = new Request.Builder()
+                        .url(SERVER_URL + "/randRecommend")
+                        .post(requestBody)
+                        .build();
+                Response response = okHttpClient.newCall(request).execute();
+                String responseData = response.body().string();
+                Log.d("response", response.code() + "");
+                Log.d("response", responseData);
+                
+                emitter.onNext(responseData);
+                emitter.onComplete();
+            }
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Intent intent = new Intent(MainActivity.this, RecommendActivity.class);
+                        intent.putExtra("DishData", s);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
 }

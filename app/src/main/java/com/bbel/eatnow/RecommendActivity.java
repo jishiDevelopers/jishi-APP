@@ -2,6 +2,7 @@ package com.bbel.eatnow;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -92,7 +93,6 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         for (int i = 0; i < Integer.parseInt(dishNum); i++) {
             String number = Integer.toString(i + 1);
             mCardAdapter.addCardItem(new CardItem1(setDemoRestaurant(restaurantArray[i], canteensArray[i]), setDemoDishes(dishesArray[i]), number));
-
         }
         mFragmentCardAdapter = new CardFragmentPagerAdapter1(getSupportFragmentManager(),
                 dpToPixels(2, this));
@@ -116,6 +116,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 String item = Integer.toString(mViewPager.getCurrentItem());
                 int i = Integer.valueOf(item);
                 //Log.d("第几页啊:", item);
+                startActivity(new Intent(RecommendActivity.this, StoreLocationActivity.class));
                 postRequest(i);
                 switch (httpCode) {
                     case 400: {

@@ -13,6 +13,7 @@ public class PathItem {
     private boolean isSelect;
     private String name;
 
+
     public PathItem(Path path) {
         mPath = path;
     }
@@ -38,19 +39,21 @@ public class PathItem {
         if (isSelect) {
             //首先绘制选中的背景阴影
             paint.clearShadowLayer();
-            paint.setStyle(Paint.Style.FILL);
-            paint.setShadowLayer(8, 0, 0, Color.BLACK);
+            paint.setStyle(Paint.Style.STROKE);
+            paint.setShadowLayer(8, 0, 0, Color.BLUE);
             canvas.drawPath(mPath,paint);
             //绘制具体显示的
             paint.clearShadowLayer();
+            // TODO: 2018/12/18 修改颜色
             paint.setColor(Color.BLUE);
             paint.setStyle(Paint.Style.FILL);
             canvas.drawPath(mPath, paint);
         } else {
             //绘制具体显示的
             paint.clearShadowLayer();
-            paint.setColor(Color.GRAY);
-            paint.setStyle(Paint.Style.FILL);
+            // TODO: 2018/12/18 修改颜色
+            paint.setColor(Color.BLACK);
+            paint.setStyle(Paint.Style.STROKE);
             canvas.drawPath(mPath, paint);
         }
     }
