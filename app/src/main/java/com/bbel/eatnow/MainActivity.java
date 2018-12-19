@@ -111,7 +111,6 @@ public class MainActivity extends BaseActivity {
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                // TODO: 2018/12/13 弹出详情
                 Bundle bundle = marker.getExtraInfo();
                 int id = bundle.getInt("id");
                 getStoreDetail(id);
@@ -326,7 +325,6 @@ public class MainActivity extends BaseActivity {
                         .position(latLng)
                         .icon(bitmapDescriptor)
                         .extraInfo(bundle);
-                // TODO: 2018/12/13 extraInfo()
                 mBaiduMap.addOverlay(overlayOptions);
             }
         } catch (Exception e) {

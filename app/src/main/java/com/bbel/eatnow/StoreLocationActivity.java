@@ -20,7 +20,8 @@ public class StoreLocationActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_location);
         Intent intent = getIntent();
-
+//        String id = intent.getStringExtra();
+//        int map_id = intent.getIntExtra()
         initWidgets();
         mapView.setChoose("40", R.raw.sun_map);
     }
