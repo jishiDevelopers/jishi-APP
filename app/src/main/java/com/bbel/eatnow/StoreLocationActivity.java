@@ -14,16 +14,18 @@ import java.lang.ref.WeakReference;
 public class StoreLocationActivity extends BaseActivity {
 
     MapView mapView;
+    int[] mapIds = new int[]{R.raw.ding_xiang_map, R.raw.tian_jiao_yuan_map, R.raw.jing_yuan_map,
+        R.raw.rose_map, R.raw.he_feng_map, R.raw.sun_map};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_store_location);
         Intent intent = getIntent();
-//        String id = intent.getStringExtra();
-//        int map_id = intent.getIntExtra()
+        String id = intent.getStringExtra("idRest");
+        String map_id = intent.getStringExtra("canteenid");
         initWidgets();
-        mapView.setChoose("40", R.raw.sun_map);
+        mapView.setChoose(id, mapIds[Integer.valueOf(map_id)]);
     }
 
 

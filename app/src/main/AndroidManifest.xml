@@ -54,7 +54,6 @@
         <activity
             android:name=".RegisterActivity"
             android:theme="@style/Translucent" />
-        <activity android:name=".LoginSuccessActivity" />
         <activity android:name=".QuestionActivity" />
 
         <activity android:name=".HistoryActivity"/>

@@ -30,7 +30,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class HistoryActivity extends AppCompatActivity {
+public class HistoryActivity extends BaseActivity {
     private MyAdapter adapter;
     private String url = "http://193.112.6.8/history";
     private int httpCode;

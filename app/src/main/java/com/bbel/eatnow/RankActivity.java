@@ -21,7 +21,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class RankActivity extends AppCompatActivity {
+public class RankActivity extends BaseActivity {
 
     private String url = "http://193.112.6.8/dishRank";
 

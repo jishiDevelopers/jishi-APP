@@ -123,12 +123,11 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 /**
                  * 需要更改活动名
                  */
-                Intent intent =new Intent(RecommendActivity.this,HistoryActivity.class);
+                Intent intent = new Intent(RecommendActivity.this, StoreLocationActivity.class);
                 intent.putExtra("idRest",restaurantId[i]);
                 intent.putExtra("canteenid",pictureArray[i]);
-               startActivity(intent);
+                startActivity(intent);
                 //Log.d("第几页啊:", item);
-                startActivity(new Intent(RecommendActivity.this, StoreLocationActivity.class));
                 postRequest(i);
                 switch (httpCode) {
                     case 400: {

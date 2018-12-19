@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -79,6 +80,7 @@ public class MainActivity extends BaseActivity {
 
     MapView mapView;
     BaiduMap mBaiduMap;
+    NavigationView navigationView;
 
     LHanlder lHanlder;
 
@@ -150,6 +152,28 @@ public class MainActivity extends BaseActivity {
         button.setOnLongClickListener((v) -> {
             getRandomDish();
             return false;
+        });
+
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(R.id.main_activity);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case  R.id.main_activity:
+                        mDrawerLayout.closeDrawers();
+                        break;
+                    case R.id.history_activity:
+                        startActivity(new Intent(MainActivity.this, HistoryActivity.class));
+                        mDrawerLayout.closeDrawers();
+                        break;
+                    case R.id.rank_activity:
+                        startActivity(new Intent(MainActivity.this, RankActivity.class));
+                        mDrawerLayout.closeDrawers();
+                        break;
+                }
+                return false;
+            }
         });
 
     }
@@ -540,7 +564,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onNext(String s) {
                         Intent intent = new Intent(MainActivity.this, RecommendActivity.class);
-                        intent.putExtra("DishData", s);
+                        intent.putExtra("intentMessage", s);
                         startActivity(intent);
                     }
 
