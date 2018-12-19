@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,18 +45,19 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     private ShadowTransformer1 mFragmentCardShadowTransformer1;
     private boolean mShowingFragments = false;
     /* 初始值可删 */
-    private String[] restaurantArray = {"兰州拉面", "腊么香", "千里香混沌", "酷乐吧"};
+    private String[] restaurantArray = new String [5];
     /* 初始值可删 */
-    private String[] dishesArray = {"炒面", "炒饭", "大碗混沌", "烤肉饭"};
+    private String[] dishesArray = new String [5];
     /* 初始值可删 */
-    private String[] canteensArray = {"玫瑰一楼", "玫瑰二楼", "玫瑰二楼", "玫瑰二楼"};
+    private String[] canteensArray = new String [5];
     /* 初始值可删 */
-    private String[] dishNumArray = {"dish1", "dish2", "dish3", "dish4", "dish5", "dish6", "dish7", "dish8", "dish9", "dish10"};
+    private String[] dishNumArray = {"dish0","dish1", "dish2", "dish3", "dish4", "dish5", "dish6", "dish7", "dish8", "dish9", "dish10"};
     /* 初始值可删 */
-    private String[] dishId = {"211", "187", "192", "201", "188"};
-    /* 初始值可删 */
-    private String[] restaurantId = {"15", "15", "30", "30", "38"};
-    private String dishNum = "3";
+    private String[] dishId = new String [5];
+    /**
+     *  初始值可删 */
+    private String[] restaurantId = new String [5];
+    private String [] pictureArray = new String [5];
     private int intDisuhNumber;
     private String demoDishes;
     private String intentMessage;
@@ -80,17 +82,20 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
         setContentView(R.layout.activity_recommend);
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mCardAdapter = new CardPagerAdapter1();
-        //SharedPreferences.Editor editor = getSharedPreferences("data",MODE_PRIVATE).edit();
-        /*
+        /**
         读取文件
          */
         SharedPreferences userMessage = getSharedPreferences("user", MODE_PRIVATE);
         token = userMessage.getString("token", "");
         userId = userMessage.getString("id", "");
-        SharedPreferences resultMessage = getSharedPreferences("result", MODE_PRIVATE);
-        intentMessage = resultMessage.getString("result", "");
+        //SharedPreferences resultMessage = getSharedPreferences("result", MODE_PRIVATE);
+        Intent getIntent =getIntent();
+        /**
+         *文垚给的信息;
+         */
+        intentMessage=getIntent.getStringExtra("intentMessage");
         parseJSONWithJSONObject(intentMessage);
-        for (int i = 0; i < Integer.parseInt(dishNum); i++) {
+        for (int i = 0; i < intDisuhNumber; i++) {
             String number = Integer.toString(i + 1);
             mCardAdapter.addCardItem(new CardItem1(setDemoRestaurant(restaurantArray[i], canteensArray[i]), setDemoDishes(dishesArray[i]), number));
         }
@@ -115,6 +120,13 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             case R.id.take_me_go: {
                 String item = Integer.toString(mViewPager.getCurrentItem());
                 int i = Integer.valueOf(item);
+                /**
+                 * 需要更改活动名
+                 */
+                Intent intent =new Intent(RecommendActivity.this,HistoryActivity.class);
+                intent.putExtra("idRest",restaurantId[i]);
+                intent.putExtra("canteenid",pictureArray[i]);
+               startActivity(intent);
                 //Log.d("第几页啊:", item);
                 startActivity(new Intent(RecommendActivity.this, StoreLocationActivity.class));
                 postRequest(i);
@@ -144,7 +156,7 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
             }
             case R.id.next_restaurant: {
 
-                int number = Integer.parseInt(dishNum);
+                int number = intDisuhNumber;
                 int currentItem = mViewPager.getCurrentItem();
                 currentItem = currentItem + 1;
                 if (currentItem > number - 1) {
@@ -181,27 +193,27 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
                 if (intDisuhNumber >= 10) {
                     intDisuhNumber = 10;
                 }
+                Log.d("W",jsonObject.getString("dishNum"));
                 idRecord = jsonObject.getString("idRecord");
                 for (int i = 0; i < intDisuhNumber; i++) {
                     String message;
                     message = jsonObject.getString(dishNumArray[i]);
                     JSONObject messageDish = new JSONObject(message);
-                    restaurantArray[i] = messageDish.getString("RestName");
+                    restaurantArray[i] = messageDish.getString("restName");
                     dishesArray[i] = messageDish.getString("dishName");
                     canteensArray[i] = messageDish.getString("canteen");
                     dishId[i] = messageDish.getString("idDish");
                     restaurantId[i] = messageDish.getString("idRest");
+                    pictureArray[i]=messageDish.getString("canteenid");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
     private void postRequest(int i) {
         String postURL = "http://193.112.6.8/record_store";
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient = new OkHttpClient.Builder()
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
@@ -235,3 +247,4 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
 
     }
 }
+
