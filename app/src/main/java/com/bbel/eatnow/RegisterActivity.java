@@ -3,6 +3,7 @@ package com.bbel.eatnow;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -158,7 +159,7 @@ public class RegisterActivity extends BaseActivity {
                 if(!TextUtils.isEmpty(userTel.getText().toString().trim())){
                     if(userTel.getText().toString().trim().length()==11){
                         iPhone = userTel.getText().toString().trim();
-                        SMSSDK.getVerificationCode("86",iPhone);
+                        SMSSDK.getVerificationCode("86", iPhone);
                         userCode.requestFocus();
                         buttonSend.setVisibility(View.GONE);
                     }else{
@@ -341,6 +342,8 @@ public class RegisterActivity extends BaseActivity {
 
         Message message = new Message();
         Bundle bundle = new Bundle();
+        bundle.putString("id", id);
+        bundle.putString("token", token);
         bundle.putInt("http_code", http_code);
         message.setData(bundle);
         message.what = 1;
@@ -355,13 +358,17 @@ public class RegisterActivity extends BaseActivity {
                 case 1:
                     Bundle bundle = msg.getData();
                     int http_code = bundle.getInt("http_code");
-                    if(code == true) {
+                    if(code) {
                         if(http_code == 200) {
-                            Toast.makeText(RegisterActivity.this, "注册成功",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                             //跳转页面
+                            SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
+                            editor.putString("id", bundle.getString("id"));
+                            editor.putString("token", bundle.getString("token"));
+                            editor.apply();
+
                             ActivityOptionsCompat oc1 = ActivityOptionsCompat.makeSceneTransitionAnimation(RegisterActivity.this);
-                            Intent i1 = new Intent(RegisterActivity.this, LoginActivity.class);
+                            Intent i1 = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(i1, oc1.toBundle());
                         } else if(http_code == 401) {
                             Toast.makeText(RegisterActivity.this, "密码太短或太长",
@@ -454,5 +461,6 @@ public class RegisterActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         hHandler.removeCallbacksAndMessages(null);
+        handler.removeCallbacksAndMessages(null);
     }
 }

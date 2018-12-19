@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -60,11 +61,17 @@ public class BaseActivity extends AppCompatActivity {
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    // TODO: 2018/12/19 清除用户数据
+                    SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
+                    editor.putString("id", "-1");
+                    editor.putString("token", "0");
+                    editor.apply();
                     ActivityCollector.finishAll();
                     context.startActivity(new Intent(context, LoginActivity.class));
                 }
             });
 //            builder.setPositiveButton("确定", )
+            builder.show();
         }
     }
 

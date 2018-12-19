@@ -52,6 +52,8 @@ import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.model.LatLng;
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -81,6 +83,7 @@ public class MainActivity extends BaseActivity {
     MapView mapView;
     BaiduMap mBaiduMap;
     NavigationView navigationView;
+    FloatingActionMenu floatingActionMenu;
 
     LHanlder lHanlder;
 
@@ -89,6 +92,7 @@ public class MainActivity extends BaseActivity {
     BitmapDescriptor bitmapDescriptor;
     Overlay myLocationOverlay;
     boolean isFirst = true;
+    List<StoreLocation> storeLocations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +112,7 @@ public class MainActivity extends BaseActivity {
 
     private void initWidgets() {
         mapView = findViewById(R.id.mmap);
+//        mapView.showZoomControls(false);
         mBaiduMap = mapView.getMap();
 
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
@@ -171,10 +176,31 @@ public class MainActivity extends BaseActivity {
                         startActivity(new Intent(MainActivity.this, RankActivity.class));
                         mDrawerLayout.closeDrawers();
                         break;
+                    case R.id.logout:
+                        sendBroadcast(new Intent("com.bbel.eatnow.FORCE_OFFLINE"));
+                        break;
                 }
                 return false;
             }
         });
+
+
+        floatingActionMenu = findViewById(R.id.floating_action_menu);
+
+        FloatingActionButton item0 = findViewById(R.id.menu_item0);
+        item0.setOnClickListener((v)->{ setChooseRestaurant("3", false);});
+        FloatingActionButton item1 = findViewById(R.id.menu_item1);
+        item1.setOnClickListener((v)->{ setChooseRestaurant("4", false);});
+        FloatingActionButton item2 = findViewById(R.id.menu_item2);
+        item2.setOnClickListener((v)->{ setChooseRestaurant("2", false);});
+        FloatingActionButton item3 = findViewById(R.id.menu_item3);
+        item3.setOnClickListener((v)->{ setChooseRestaurant("5", false);});
+        FloatingActionButton item4 = findViewById(R.id.menu_item4);
+        item4.setOnClickListener((v)->{ setChooseRestaurant("0", false);});
+        FloatingActionButton item5 = findViewById(R.id.menu_item5);
+        item5.setOnClickListener((v)->{ setChooseRestaurant("1", false);});
+        FloatingActionButton item6 = findViewById(R.id.menu_item6);
+        item6.setOnClickListener((v)->{ setChooseRestaurant("-1", true);});
 
     }
 
@@ -218,7 +244,7 @@ public class MainActivity extends BaseActivity {
             LatLng ll = new LatLng(bdLocation.getLatitude(), bdLocation.getLongitude());
             currentLocation = ll;
             if (isFirst) {
-                moveTo(ll);
+                moveTo(ll, 19);
                 isFirst = false;
             }
             int errorCode = bdLocation.getLocType();
@@ -233,8 +259,8 @@ public class MainActivity extends BaseActivity {
     }
 
 
-    private void moveTo(LatLng LL) {
-        MapStatus mMapStatus = new MapStatus.Builder().target(LL).zoom(19).build();
+    private void moveTo(LatLng LL, int level) {
+        MapStatus mMapStatus = new MapStatus.Builder().target(LL).zoom(level).build();
         MapStatusUpdate mMapStatusUpdate = MapStatusUpdateFactory.newMapStatus(mMapStatus);
         mBaiduMap.setMapStatus(mMapStatusUpdate);
     }
@@ -335,12 +361,12 @@ public class MainActivity extends BaseActivity {
 
     private void handleResponse(String receiveData) {
         try {
-            List<StoreLocation> storeLocations;
-            String responseData = receiveData;
             Gson gson = new Gson();
-            storeLocations = gson.fromJson(responseData, new TypeToken<List<StoreLocation>>() {}.getType());
-
+            storeLocations = gson.fromJson(receiveData, new TypeToken<List<StoreLocation>>() {}.getType());
+//            Log.d("responseData", receiveData);
+//            Log.d("responseData", storeLocations.size()+"");
             for (StoreLocation storeLocation : storeLocations) {
+//                Log.d("responseData", storeLocation.getCanteen());
                 LatLng latLng = new LatLng(Double.valueOf(storeLocation.latitude), Double.valueOf(storeLocation.longitude));
                 BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_mark);
                 Bundle bundle = new Bundle();
@@ -365,6 +391,8 @@ public class MainActivity extends BaseActivity {
         String longitude;
 
         String latitude;
+
+        String canteen;
 
         public int getId() {
             return id;
@@ -396,6 +424,14 @@ public class MainActivity extends BaseActivity {
 
         public void setLatitude(String latitude) {
             this.latitude = latitude;
+        }
+
+        public String getCanteen() {
+            return canteen;
+        }
+
+        public void setCanteen(String canteen) {
+            this.canteen = canteen;
         }
     }
 
@@ -578,6 +614,57 @@ public class MainActivity extends BaseActivity {
 
                     }
                 });
+    }
+
+
+    private void setChooseRestaurant(String canteen, boolean isAll) {
+        mBaiduMap.clear();
+        LatLng aimLatLng;
+        switch (canteen) {
+            case "0":
+                aimLatLng = new LatLng(26.062428,119.198511);
+                moveTo(aimLatLng, 20);
+                break;
+            case "1":
+                aimLatLng = new LatLng(26.062428,119.198511);
+                moveTo(aimLatLng, 20);
+                break;
+            case "2":
+                aimLatLng = new LatLng(26.062599, 119.199167);
+                moveTo(aimLatLng, 20);
+                break;
+            case "3":
+                aimLatLng = new LatLng(26.058813, 119.199292);
+                moveTo(aimLatLng, 20);
+                break;
+            case "4":
+                aimLatLng = new LatLng(26.058813, 119.199292);
+                moveTo(aimLatLng, 20);
+                break;
+            case "5":
+                aimLatLng = new LatLng(26.062599, 119.199167);
+                moveTo(aimLatLng, 20);
+                break;
+            case "-1":
+                aimLatLng = new LatLng(26.060911, 119.198933);
+                moveTo(aimLatLng, 19);
+                break;
+            default:
+                break;
+        }
+        for (StoreLocation storeLocation : storeLocations) {
+            if (storeLocation.getCanteen().equals(canteen) || isAll) {
+                LatLng latLng = new LatLng(Double.valueOf(storeLocation.latitude), Double.valueOf(storeLocation.longitude));
+                BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.icon_openmap_mark);
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", storeLocation.getId());
+                OverlayOptions overlayOptions = new MarkerOptions()
+                        .position(latLng)
+                        .icon(bitmapDescriptor)
+                        .extraInfo(bundle);
+                mBaiduMap.addOverlay(overlayOptions);
+            }
+        }
     }
 
 }

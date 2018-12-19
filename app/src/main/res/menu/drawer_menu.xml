@@ -15,6 +15,10 @@
             android:id="@+id/rank_activity"
             android:title="美食排行榜"/>
 
+        <item
+            android:id="@+id/logout"
+            android:title="退出登录"/>
+
     </group>
 
 </menu>
