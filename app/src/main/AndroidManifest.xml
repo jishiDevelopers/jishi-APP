@@ -23,7 +23,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!-- 百度地图SDK所需权限 -->
-    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -56,6 +55,7 @@
             android:theme="@style/Translucent" />
         <activity android:name=".LoginSuccessActivity" />
         <activity android:name=".QuestionActivity" />
+        <activity android:name=".HistoryActivity"/>
     </application>
 
 </manifest>
