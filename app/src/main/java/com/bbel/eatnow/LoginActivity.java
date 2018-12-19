@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bbel.eatnow.utils.ActivityCollector;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -267,6 +268,7 @@ public class LoginActivity extends BaseActivity {
 //                        Intent i1 = new Intent(LoginActivity.this, QuestionActivity.class);
                         Intent i1 = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(i1, oc1.toBundle());
+                        ActivityCollector.finishAll();
                     }
                     break;
             }

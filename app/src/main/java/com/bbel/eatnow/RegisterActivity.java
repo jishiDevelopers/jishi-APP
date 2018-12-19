@@ -370,6 +370,7 @@ public class RegisterActivity extends BaseActivity {
                             ActivityOptionsCompat oc1 = ActivityOptionsCompat.makeSceneTransitionAnimation(RegisterActivity.this);
                             Intent i1 = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(i1, oc1.toBundle());
+                            finish();
                         } else if(http_code == 401) {
                             Toast.makeText(RegisterActivity.this, "密码太短或太长",
                                     Toast.LENGTH_SHORT).show();
@@ -416,7 +417,6 @@ public class RegisterActivity extends BaseActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
             super.handleMessage(msg);
             int event = msg.arg1;
             int result = msg.arg2;

@@ -61,7 +61,6 @@ public class BaseActivity extends AppCompatActivity {
             builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    // TODO: 2018/12/19 清除用户数据
                     SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
                     editor.putString("id", "-1");
                     editor.putString("token", "0");

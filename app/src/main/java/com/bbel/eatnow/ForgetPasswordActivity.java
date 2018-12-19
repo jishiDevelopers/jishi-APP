@@ -409,7 +409,6 @@ public class ForgetPasswordActivity extends BaseActivity {
 
         @Override
         public void handleMessage(Message msg) {
-            // TODO Auto-generated method stub
             super.handleMessage(msg);
             int event = msg.arg1;
             int result = msg.arg2;
