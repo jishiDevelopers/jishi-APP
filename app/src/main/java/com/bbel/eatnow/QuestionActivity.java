@@ -371,9 +371,10 @@ public class QuestionActivity extends BaseActivity implements View.OnClickListen
 //                    Intent i2 = new Intent(QuestionActivity.this, RecommendActivity.class);
 //                    startActivity(i2, oc2.toBundle());
                 }
+                /*
                 ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(QuestionActivity.this);
                 Intent i2 = new Intent(QuestionActivity.this, RecommendActivity.class);
-                startActivity(i2, oc2.toBundle());
+                startActivity(i2, oc2.toBundle());*/
                 break;
             default:
                 break;
@@ -424,12 +425,16 @@ public class QuestionActivity extends BaseActivity implements View.OnClickListen
                     String responseData = response.body().string();
                     http_code = response.code();
 
+                    Intent intent = new Intent(QuestionActivity.this, RecommendActivity.class);
+                    intent.putExtra("intentMessage", responseData);
+                    startActivity(intent);
+/*
                     SharedPreferences.Editor editor = getSharedPreferences("result", MODE_PRIVATE).edit();
                     editor.putString("result", responseData);
                     editor.apply();
-
+*/
                     //showRecommend(responseData);
-                    //Log.d("LoginActivity1", "dish is " + responseData);
+                    //Log.d("SecondActivity", "dish is " + responseData);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

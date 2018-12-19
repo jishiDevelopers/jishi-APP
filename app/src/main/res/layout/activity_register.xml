@@ -71,7 +71,7 @@
                             android:paddingBottom="2dp" />
                     </android.support.design.widget.TextInputLayout>
                 </RelativeLayout>
-<!--
+
                 <RelativeLayout
                     android:paddingStart="50dp"
                     android:paddingEnd="30dp"
@@ -96,8 +96,29 @@
                             android:paddingBottom="2dp" />
                     </android.support.design.widget.TextInputLayout>
 
+                    <Button
+                        android:id="@+id/button_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="7dp"
+                        android:background="@null"
+                        android:button="@drawable/selector_bg_edit_2"
+                        android:text="@string/send"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/now"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginStart="150dp"
+                        android:gravity="center_horizontal"
+                        android:visibility="gone"
+                        android:textSize="18sp"
+                        android:textColor="#aaaaaa" />
                 </RelativeLayout>
--->
                 <LinearLayout
                     android:paddingStart="50dp"
                     android:paddingEnd="30dp"
@@ -147,7 +168,7 @@
                             android:paddingBottom="2dp" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
-
+<!--
                 <Button
                     android:id="@+id/button_send"
                     android:layout_width="wrap_content"
@@ -160,7 +181,7 @@
                     android:text="@string/send"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp" />
-
+-->
                 <Button
                     android:layout_marginTop="20dp"
                     android:layout_gravity="center_horizontal"

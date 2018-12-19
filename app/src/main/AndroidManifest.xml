@@ -47,7 +47,8 @@
             android:name="com.baidu.location.f"
             android:enabled="true"
             android:process=":remote" />
-        <activity android:name=".RecommendActivity"/>
+
+        <activity android:name=".RecommendActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".StoreLocationActivity" />
         <activity
@@ -55,7 +56,11 @@
             android:theme="@style/Translucent" />
         <activity android:name=".LoginSuccessActivity" />
         <activity android:name=".QuestionActivity" />
+
         <activity android:name=".HistoryActivity"/>
+
+        <activity android:name=".RankActivity"/>
+
     </application>
 
 </manifest>
