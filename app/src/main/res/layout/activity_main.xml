@@ -15,23 +15,30 @@
         <com.baidu.mapapi.map.MapView
             android:id="@+id/mmap"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp" />
 
         <Button
             android:id="@+id/main_button_test"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="76dp"
+            android:layout_height="68dp"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
-            android:layout_marginBottom="42dp" />
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="42dp"
+            android:background="@drawable/eaticon" />
 
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/floating_action_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="120dp"
+            android:layout_height="342dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="0dp"
+            android:layout_marginEnd="6dp"
             android:layout_marginBottom="0dp"
             app:menu_fab_size="mini"
             app:menu_openDirection="down">
@@ -93,6 +100,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />
+        app:menu="@menu/drawer_menu"
+        android:background="@drawable/purecolorbg"/>
 
 </android.support.v4.widget.DrawerLayout>
