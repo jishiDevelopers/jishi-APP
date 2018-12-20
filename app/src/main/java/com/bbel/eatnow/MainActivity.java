@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity {
 
     private void initWidgets() {
         mapView = findViewById(R.id.mmap);
-//        mapView.showZoomControls(false);
+        mapView.showZoomControls(false);
         mBaiduMap = mapView.getMap();
 
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {

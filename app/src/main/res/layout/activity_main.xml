@@ -22,58 +22,68 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="42dp" />
 
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/floating_action_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            app:menu_openDirection="down"
-            app:menu_fab_size="mini">
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            app:menu_fab_size="mini"
+            app:menu_openDirection="down">
 
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_item0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_label="玫瑰园" />
+                app:fab_label="玫瑰园"
+                app:fab_size="mini" />
+
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_item1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_label="禾丰园" />
+                app:fab_label="禾丰园"
+                app:fab_size="mini" />
+
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_item2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_label="京元餐厅" />
+                app:fab_label="京元餐厅"
+                app:fab_size="mini" />
+
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_item3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_label="朝阳餐厅" />
+                app:fab_label="朝阳餐厅"
+                app:fab_size="mini" />
+
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_item4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_label="丁香园" />
+                app:fab_label="丁香园"
+                app:fab_size="mini" />
+
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_item5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_label="天骄园" />
+                app:fab_label="天骄园"
+                app:fab_size="mini" />
+
             <com.github.clans.fab.FloatingActionButton
                 android:id="@+id/menu_item6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:fab_size="mini"
-                app:fab_label="显示全部" />
+                app:fab_label="显示全部"
+                app:fab_size="mini" />
         </com.github.clans.fab.FloatingActionMenu>
 
     </RelativeLayout>
