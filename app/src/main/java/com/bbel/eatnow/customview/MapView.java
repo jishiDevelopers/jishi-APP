@@ -43,7 +43,7 @@ public class MapView extends View {
     //手势监听器
 //    private GestureDetector mDetector;
     //缩放系数
-    private float scale = 1f;
+    private float scale = 0.8f;
     //保存path对象
     private List<PathItem> pathItems = new ArrayList<>();
 
