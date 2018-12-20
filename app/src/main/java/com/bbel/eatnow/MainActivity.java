@@ -520,7 +520,8 @@ public class MainActivity extends BaseActivity {
 
         storeName.setText(storeDetail.getName());
         storeLocation.setText(storeDetail.getCanteen());
-        storeItem.setText(storeDetail.getZhaopaicai());
+        storeItem.setText("推荐菜品：");
+        storeItem.append(storeDetail.getZhaopaicai());
 
         PopupWindow popupWindow = new PopupWindow(view, WindowManager.LayoutParams.MATCH_PARENT, 400);
         popupWindow.setFocusable(true);
