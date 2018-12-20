@@ -350,6 +350,8 @@ public class QuestionActivity extends BaseActivity implements View.OnClickListen
                 }
                 if (mViewPager.getCurrentItem() == 2) {
                     button_go.setVisibility(View.VISIBLE);
+                    button_yes.setVisibility(View.INVISIBLE);
+                    button_no.setVisibility(View.INVISIBLE);
                 }
                 break;
             case R.id.button_no:
@@ -362,6 +364,8 @@ public class QuestionActivity extends BaseActivity implements View.OnClickListen
                 }
                 if (mViewPager.getCurrentItem() == 2) {
                     button_go.setVisibility(View.VISIBLE);
+                    button_yes.setVisibility(View.INVISIBLE);
+                    button_no.setVisibility(View.INVISIBLE);
                 }
                 break;
             case R.id.btn_go:

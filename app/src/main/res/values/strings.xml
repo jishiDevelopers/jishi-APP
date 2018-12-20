@@ -15,7 +15,7 @@
     <string name="code">请输入验证码</string>
     <string name="finish">我选完啦</string>
     <string name="space"> </string>
-    <string name="yes">yes</string>
-    <string name="no">no</string>
+    <string name="yes">是的</string>
+    <string name="no">否</string>
 
 </resources>
