@@ -69,8 +69,10 @@ public class RecommendActivity extends BaseActivity implements View.OnClickListe
     private String token;
 
     private String setDemoRestaurant(String restaurant, String canteenName) {
-        return "那么就吃" + "\"" + canteenName + restaurant + "\"的:";
+        return "向你推荐"+"\n"+"\n"+"\"" + canteenName + "\"" + restaurant+"\n" ;
     }
+
+
 
     private String setDemoDishes(String dishs) {
         return this.demoDishes = "《" + dishs + "》";

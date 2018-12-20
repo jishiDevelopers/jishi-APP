@@ -27,7 +27,16 @@
                 android:id="@+id/question_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Card title" />
+                android:text="Card title"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center"/>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/restaurant_name"
+                />
 
             <TextView
                 style="@style/TextAppearance.AppCompat.Body1"
