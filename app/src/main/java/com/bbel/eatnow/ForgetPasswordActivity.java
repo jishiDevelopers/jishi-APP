@@ -54,7 +54,8 @@ public class ForgetPasswordActivity extends BaseActivity {
     private FloatingActionButton fab;
     private CardView forget;
     private Button buttonReset;
-    private String url = "http://193.112.6.8/password_forget";
+//    private String url = "http://193.112.6.8/password_forget";
+    private String url = "http://193.112.6.8/password_reset";
 
     private String iPhone;
     private String iCord;
@@ -305,6 +306,7 @@ public class ForgetPasswordActivity extends BaseActivity {
                     OkHttpClient client = new OkHttpClient();
                     Data data = new Data();
                     data.setTel(user_tel);
+                    data.setPasswd(user_passwd);
                     //data.setId("3");
                     //data.setPasswd(user_passwd);
                     //data.setToken("c48b234fa780da9c63f42ccadb115dee50d77783");
@@ -355,8 +357,9 @@ public class ForgetPasswordActivity extends BaseActivity {
                 case 1:
                     Bundle bundle = msg.getData();
                     int http_code = bundle.getInt("http_code");
+                    Log.d("httpcode",Integer.toString(http_code));
                     //判断HTTP状态码
-                    if(code == true) {
+                    if(code) {
                         if(http_code == 200) {
                             ActivityOptions oc2 = ActivityOptions.makeSceneTransitionAnimation(ForgetPasswordActivity.this);
                             Intent i2 = new Intent(ForgetPasswordActivity.this,LoginActivity.class);
