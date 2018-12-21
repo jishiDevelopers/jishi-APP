@@ -51,7 +51,6 @@ public class LoginActivity extends BaseActivity {
     private String token;
     private Handler hHandler;
 
-    String url = "http://193.112.6.8/login";
 
     public class User {
         private String tel;
@@ -209,7 +208,7 @@ public class LoginActivity extends BaseActivity {
                     String toJson = gson.toJson(user);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), toJson);
                     Request request = new Request.Builder()
-                            .url(url)
+                            .url(SERVER_URL + "/login")
                             .post(requestBody)
                             .build();
                     Response response = client.newCall(request).execute();

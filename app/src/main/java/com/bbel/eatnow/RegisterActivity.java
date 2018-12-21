@@ -46,18 +46,15 @@ public class RegisterActivity extends BaseActivity {
     private CardView register;
     private Button buttonRegister;
     private Button buttonSend;
-    private Handler hHandler;
+    private HHanlder hHandler;
     private TextView now;
 
     private String user_tel;
     private String user_passwd;
     private String user_passwd_repeat;
-    private String user_code;
-    private int http_code;
-    private boolean code = false;
+//    private int http_code;
 
     private String iPhone;
-    private String iCord;
     private int time = 60;
     private boolean flag = true;
 
@@ -134,7 +131,6 @@ public class RegisterActivity extends BaseActivity {
         EventHandler eh=new EventHandler(){
             @Override
             public void afterEvent(int event, int result, Object data) {
-
                 Message msg = new Message();
                 msg.arg1 = event;
                 msg.arg2 = result;
@@ -181,12 +177,11 @@ public class RegisterActivity extends BaseActivity {
                 getWindow().setEnterTransition(null);
 
                 if(!TextUtils.isEmpty(userCode.getText().toString().trim())){
-                    if(userCode.getText().toString().trim().length()==4){
-                        iCord = userCode.getText().toString().trim();
+                    if (userCode.getText().toString().trim().length() == 4) {
+                        String iCord = userCode.getText().toString().trim();
                         SMSSDK.submitVerificationCode("86", iPhone, iCord);
-                        flag = false;
-                    }else{
-                        Toast.makeText(RegisterActivity.this, "请输入完整验证码", Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(RegisterActivity.this, "验证码格式错误", Toast.LENGTH_LONG).show();
                         userCode.requestFocus();
                     }
                 }else{
@@ -199,19 +194,12 @@ public class RegisterActivity extends BaseActivity {
                 user_passwd_repeat = userPasswdRepeat.getText().toString();
                 //user_code = userCode.getText().toString();
                 if(user_tel.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "账号不能为空",
-                            Toast.LENGTH_SHORT).show();
-                } else if(user_passwd.isEmpty() && user_passwd_repeat.isEmpty()) {
-                    Toast.makeText(RegisterActivity.this, "密码不能为空",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "账号不能为空", Toast.LENGTH_SHORT).show();
+                } else if(user_passwd.isEmpty() || user_passwd_repeat.isEmpty()) {
+                    Toast.makeText(RegisterActivity.this, "密码不能为空", Toast.LENGTH_SHORT).show();
                 }
                 else if(!user_passwd.equals(user_passwd_repeat)) {
-                    Toast.makeText(RegisterActivity.this, "密码输入不一致",
-                            Toast.LENGTH_SHORT).show();
-                }else {
-                    if (code) {
-                        sendRequestWithOkHttp();
-                    }
+                    Toast.makeText(RegisterActivity.this, "密码输入不一致", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -304,12 +292,15 @@ public class RegisterActivity extends BaseActivity {
         });
         mAnimator.start();
     }
+
     @Override
     public void onBackPressed() {
         animateRevealClose();
     }
 
-    private void sendRequestWithOkHttp() {
+
+    // 注册请求
+    private void sendRegisterRequest() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -326,10 +317,18 @@ public class RegisterActivity extends BaseActivity {
                         .post(requestBody)
                         .build();
                     Response response = client.newCall(request).execute();
-                    http_code = response.code();
-                    Log.d("Register", http_code + "");
+                    int http_code = response.code();
+                    Log.d("RegisterActivity", "sendRegisterRequest  " + http_code);
                     String responseData = response.body().string();
-                    parseJSONWithGSON(responseData);
+//                    parseJSONWithGSON(responseData);
+                    if (http_code == 200) {
+                        sendLoginRequest();
+                    } else {
+                        Message message = new Message();
+                        message.what = 1;
+                        message.arg1 = http_code;
+                        hHandler.sendMessage(message);
+                    }
                 } catch (Exception e) {
                         e.printStackTrace();
                 }
@@ -337,21 +336,59 @@ public class RegisterActivity extends BaseActivity {
         }).start();
     }
 
-    private void parseJSONWithGSON(String jsonData){
+
+    // 登录请求
+    private void sendLoginRequest() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+
+                    User user = new User();
+                    user.setTel(user_tel);
+                    user.setPasswd(user_passwd);
+
+                    Gson gson = new Gson();
+                    String toJson = gson.toJson(user);
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), toJson);
+                    Request request = new Request.Builder()
+                            .url(SERVER_URL + "/login")
+                            .post(requestBody)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    int http_code = response.code();
+                    Log.d("RegisterActivity", "sendLoginRequest  " + http_code);
+
+                    String responseData = response.body().string();
+
+                    Message message = new Message();
+                    message.what = 2;
+                    message.arg1 = http_code;
+                    message.obj = responseData;
+                    hHandler.sendMessage(message);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void parseAndSaveData(String jsonData){
         Gson gson = new Gson();
         Data data = gson.fromJson(jsonData, Data.class);
         String info = data.getInfo();
         String id = data.getId();
         String token = data.getToken();
 
-        Message message = new Message();
-        Bundle bundle = new Bundle();
-        bundle.putString("id", id);
-        bundle.putString("token", token);
-        bundle.putInt("http_code", http_code);
-        message.setData(bundle);
-        message.what = 1;
-        hHandler.sendMessage(message);
+        Log.d("RegisterRegister1", "id " + id);
+        Log.d("RegisterRegister1", "token " + token);
+
+        SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
+        editor.putString("id", id);
+        editor.putString("token", token);
+        editor.apply();
     }
 
     private class HHanlder extends Handler {
@@ -360,29 +397,25 @@ public class RegisterActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    Bundle bundle = msg.getData();
-                    int http_code = bundle.getInt("http_code");
-                    Log.d("Register", bundle.getString("id"));
-                    Log.d("Register", bundle.getString("token"));
-
-                    if(http_code == 200) {
+                    if (msg.arg1 == 401) {
+                        Toast.makeText(RegisterActivity.this, "密码太短或太长", Toast.LENGTH_SHORT).show();
+                    } else if (msg.arg1 == 400) {
+                        Toast.makeText(RegisterActivity.this, "该账号已存在", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+                case 2:
+                    if(msg.arg1 == 200) {
+                        String responseData = (String) msg.obj;
+                        parseAndSaveData(responseData);
                         Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
                         //跳转页面
-                        SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
-                        editor.putString("id", bundle.getString("id"));
-                        editor.putString("token", bundle.getString("token"));
-                        editor.apply();
-
                         ActivityOptionsCompat oc1 = ActivityOptionsCompat.makeSceneTransitionAnimation(RegisterActivity.this);
                         Intent i1 = new Intent(RegisterActivity.this, MainActivity.class);
                         startActivity(i1, oc1.toBundle());
                         ActivityCollector.finishAll();
-                    } else if(http_code == 401) {
-                        Toast.makeText(RegisterActivity.this, "密码太短或太长", Toast.LENGTH_SHORT).show();
-                    } else if(http_code == 400) {
-                            Toast.makeText(RegisterActivity.this, "该账号已存在", Toast.LENGTH_SHORT).show();
+                    } else if (msg.arg1 == 400) {
+                        Toast.makeText(RegisterActivity.this, "注册成功登录失败", Toast.LENGTH_SHORT).show();
                     }
-
                     break;
             }
         }
@@ -394,21 +427,21 @@ public class RegisterActivity extends BaseActivity {
         handlerText.sendEmptyMessageDelayed(1, 1000);
     }
 
-    Handler handlerText =new Handler(){
+    Handler handlerText = new Handler() {
         public void handleMessage(Message msg) {
-            if(msg.what==1){
-                if(time>0){
-                    now.setText("已发送"+time+"秒");
+            if (msg.what == 1) {
+                if (time > 0) {
+                    now.setText("已发送" + time + "秒");
                     time--;
                     handlerText.sendEmptyMessageDelayed(1, 1000);
-                }else{
+                } else {
                     //now.setText("提示信息");
                     time = 60;
                     now.setVisibility(View.GONE);
                     buttonSend.setVisibility(View.VISIBLE);
                 }
-            }else{
-                userCode.setText("");
+            } else {
+//                userCode.setText("");
                 //now.setText("提示信息");
                 time = 60;
                 now.setVisibility(View.GONE);
@@ -417,7 +450,7 @@ public class RegisterActivity extends BaseActivity {
         }
     };
 
-    Handler handler=new Handler(){
+    Handler handler = new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
@@ -425,34 +458,29 @@ public class RegisterActivity extends BaseActivity {
             int event = msg.arg1;
             int result = msg.arg2;
             Object data = msg.obj;
-            Log.e("event", "event="+event);
-
+            Log.e("event", "event=" + event);
             if (result == SMSSDK.RESULT_COMPLETE) {
                 //短信注册成功后，返回MainActivity,然后提示新好友
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {//提交验证码成功,验证通过
                     //Toast.makeText(getApplicationContext(), "验证码校验成功", Toast.LENGTH_SHORT).show();
-                    code = true;
-                    // TODO: 2018/12/21 发送注册请求
+                    sendRegisterRequest();
                     handlerText.sendEmptyMessage(2);
-                } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){//服务器验证码发送成功
+                } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {//服务器验证码发送成功
+                    flag = false;
                     reminderText();
                     Toast.makeText(getApplicationContext(), "验证码已经发送", Toast.LENGTH_SHORT).show();
-                }else if (event ==SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES){//返回支持发送验证码的国家列表
+                } else if (event == SMSSDK.EVENT_GET_SUPPORTED_COUNTRIES) {//返回支持发送验证码的国家列表
                     Toast.makeText(getApplicationContext(), "获取国家列表成功", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if(flag){
+                if (flag) {
                     buttonSend.setVisibility(View.VISIBLE);
                     Toast.makeText(RegisterActivity.this, "验证码获取失败，请重新获取", Toast.LENGTH_SHORT).show();
                     userTel.requestFocus();
-                }else{
-                    ((Throwable) data).printStackTrace();
+                } else {
                     int resId = getStringRes(RegisterActivity.this, "smssdk_network_error");
                     Toast.makeText(RegisterActivity.this, "验证码错误", Toast.LENGTH_SHORT).show();
                     userCode.selectAll();
-/*                    if (resId > 0) {
-                        Toast.makeText(ForgetPasswordActivity.this, resId, Toast.LENGTH_SHORT).show();
-                    }*/
                 }
 
             }
@@ -467,5 +495,6 @@ public class RegisterActivity extends BaseActivity {
         super.onDestroy();
         hHandler.removeCallbacksAndMessages(null);
         handler.removeCallbacksAndMessages(null);
+        handlerText.removeCallbacksAndMessages(null);
     }
 }
