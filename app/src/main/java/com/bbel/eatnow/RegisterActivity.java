@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bbel.eatnow.utils.ActivityCollector;
 import com.google.gson.Gson;
 import com.mob.MobSDK;
 
@@ -208,7 +209,9 @@ public class RegisterActivity extends BaseActivity {
                     Toast.makeText(RegisterActivity.this, "密码输入不一致",
                             Toast.LENGTH_SHORT).show();
                 }else {
-                    sendRequestWithOkHttp();
+                    if (code) {
+                        sendRequestWithOkHttp();
+                    }
                 }
             }
         });
@@ -324,11 +327,12 @@ public class RegisterActivity extends BaseActivity {
                         .build();
                     Response response = client.newCall(request).execute();
                     http_code = response.code();
+                    Log.d("Register", http_code + "");
                     String responseData = response.body().string();
                     parseJSONWithGSON(responseData);
                 } catch (Exception e) {
                         e.printStackTrace();
-                    }
+                }
             }
         }).start();
     }
@@ -358,27 +362,27 @@ public class RegisterActivity extends BaseActivity {
                 case 1:
                     Bundle bundle = msg.getData();
                     int http_code = bundle.getInt("http_code");
-                    if(code) {
-                        if(http_code == 200) {
-                            Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
-                            //跳转页面
-                            SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
-                            editor.putString("id", bundle.getString("id"));
-                            editor.putString("token", bundle.getString("token"));
-                            editor.apply();
+                    Log.d("Register", bundle.getString("id"));
+                    Log.d("Register", bundle.getString("token"));
 
-                            ActivityOptionsCompat oc1 = ActivityOptionsCompat.makeSceneTransitionAnimation(RegisterActivity.this);
-                            Intent i1 = new Intent(RegisterActivity.this, MainActivity.class);
-                            startActivity(i1, oc1.toBundle());
-                            finish();
-                        } else if(http_code == 401) {
-                            Toast.makeText(RegisterActivity.this, "密码太短或太长",
-                                    Toast.LENGTH_SHORT).show();
-                        } else if(http_code == 400) {
-                            Toast.makeText(RegisterActivity.this, "该账号已存在",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                    if(http_code == 200) {
+                        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        //跳转页面
+                        SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
+                        editor.putString("id", bundle.getString("id"));
+                        editor.putString("token", bundle.getString("token"));
+                        editor.apply();
+
+                        ActivityOptionsCompat oc1 = ActivityOptionsCompat.makeSceneTransitionAnimation(RegisterActivity.this);
+                        Intent i1 = new Intent(RegisterActivity.this, MainActivity.class);
+                        startActivity(i1, oc1.toBundle());
+                        ActivityCollector.finishAll();
+                    } else if(http_code == 401) {
+                        Toast.makeText(RegisterActivity.this, "密码太短或太长", Toast.LENGTH_SHORT).show();
+                    } else if(http_code == 400) {
+                            Toast.makeText(RegisterActivity.this, "该账号已存在", Toast.LENGTH_SHORT).show();
                     }
+
                     break;
             }
         }
@@ -428,6 +432,7 @@ public class RegisterActivity extends BaseActivity {
                 if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {//提交验证码成功,验证通过
                     //Toast.makeText(getApplicationContext(), "验证码校验成功", Toast.LENGTH_SHORT).show();
                     code = true;
+                    // TODO: 2018/12/21 发送注册请求
                     handlerText.sendEmptyMessage(2);
                 } else if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE){//服务器验证码发送成功
                     reminderText();

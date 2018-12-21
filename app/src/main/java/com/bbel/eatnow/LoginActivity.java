@@ -268,7 +268,7 @@ public class LoginActivity extends BaseActivity {
 //                        Intent i1 = new Intent(LoginActivity.this, QuestionActivity.class);
                         Intent i1 = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(i1, oc1.toBundle());
-                        ActivityCollector.finishAll();
+                        finish();
                     }
                     break;
             }
