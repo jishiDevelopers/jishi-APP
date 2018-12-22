@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.ActivityOptions;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -54,8 +55,8 @@ public class ForgetPasswordActivity extends BaseActivity {
     private FloatingActionButton fab;
     private CardView forget;
     private Button buttonReset;
-//    private String url = "http://193.112.6.8/password_forget";
-    private String url = "http://193.112.6.8/password_reset";
+    private String url_f = "http://193.112.6.8/password_forget";
+    private String url_r = "http://193.112.6.8/password_reset";
 
     private String iPhone;
     private String iCord;
@@ -314,14 +315,19 @@ public class ForgetPasswordActivity extends BaseActivity {
                     String toJson = gson.toJson(data);
                     RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), toJson);
                     Request request = new Request.Builder()
-                            .url(url)
+                            .url(url_f)
                             .post(requestBody)
                             .build();
                     Response response = client.newCall(request).execute();
                     http_code = response.code();
                     //Log.d("RegisterActivity1", "code is " + http_code);
                     String responseData = response.body().string();
-                    parseJSONWithGSON(responseData);
+                    if(http_code == 200) {
+                        parseJSONWithGSON(responseData);
+                    } else {
+                        Toast.makeText(ForgetPasswordActivity.this, "该账号不存在",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -330,23 +336,56 @@ public class ForgetPasswordActivity extends BaseActivity {
     }
 
     private void parseJSONWithGSON(String jsonData){
-        Gson gson = new Gson();
-        Data data = gson.fromJson(jsonData, Data.class);
-/*
-        String info = data.getInfo();
-        String id = data.getId();
-        String token = data.getToken();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Gson gson = new Gson();
+                    Data data1 = gson.fromJson(jsonData, Data.class);
 
-        Log.d("RegisterActivity1", "info is " + info);
-        Log.d("RegisterActivity1", "id is " + id);
-        Log.d("RegisterActivity1", "token is " + token);
-*/
-        Message message = new Message();
-        Bundle bundle = new Bundle();
-        bundle.putInt("http_code", http_code);
-        message.setData(bundle);
-        message.what = 1;
-        hHandler.sendMessage(message);
+                    String info = data1.getInfo();
+                    String id = data1.getId();
+                    String token = data1.getToken();
+
+                    Log.d("parseJSONWithGSON", "info is " + info);
+                    Log.d("parseJSONWithGSON", "id is " + id);
+                    Log.d("parseJSONWithGSON", "token is " + token);
+
+                    Data data2 = new Data();
+                    data2.setId(id);
+                    data2.setToken(token);
+                    data2.setPasswd(user_passwd);
+
+                    OkHttpClient client = new OkHttpClient();
+                    String toJson = gson.toJson(data2);
+                    RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), toJson);
+                    Request request = new Request.Builder()
+                            .url(url_r)
+                            .post(requestBody)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    http_code = response.code();
+                    Log.d("parseJSONWithGSON", "code is " + http_code);
+                    String responseData = response.body().string();
+                    Data data3 = gson.fromJson(responseData, Data.class);
+                    String id_new = data3.getId();
+                    String token_new = data3.getToken();
+                    SharedPreferences.Editor editor = getSharedPreferences("user", MODE_PRIVATE).edit();
+                    editor.putString("id", id_new);
+                    editor.putString("token", token_new);
+                    editor.apply();
+
+                    Message message = new Message();
+                    Bundle bundle = new Bundle();
+                    bundle.putInt("http_code", http_code);
+                    message.setData(bundle);
+                    message.what = 1;
+                    hHandler.sendMessage(message);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private class HHanlder extends Handler {
