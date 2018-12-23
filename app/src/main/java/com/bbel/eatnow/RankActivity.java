@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.bbel.eatnow.adapter.RankAdapter;
 import com.bbel.eatnow.bean.RankItem;
@@ -75,13 +76,20 @@ public class RankActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
 
+        sendRequestWithOkHttp();
+
+        for(int i = 0;i<100000000;i++){
+            int j = i;
+        }
+        Log.d("cnt", "ok");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+
         RankAdapter adapter = new RankAdapter(rankList);
         recyclerView.setAdapter(adapter);
-
-        sendRequestWithOkHttp();
+        adapter.notifyDataSetChanged();
+        //sendRequestWithOkHttp();
     }
 
     private void sendRequestWithOkHttp() {
@@ -95,7 +103,7 @@ public class RankActivity extends BaseActivity {
                             .build();
                     Response response = client.newCall(request).execute();
                     String responseData = response.body().string();
-
+                    Log.d("123", responseData);
                     List<Data> data;
                     Gson gson = new Gson();
                     data = gson.fromJson(responseData, new TypeToken<List<Data>>() {}.getType());
