@@ -52,6 +52,7 @@ import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Text;
 import com.baidu.mapapi.model.LatLng;
+import com.bbel.eatnow.bean.RankItem;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.gson.Gson;
@@ -93,7 +94,10 @@ public class MainActivity extends BaseActivity {
     Overlay myLocationOverlay;
     boolean isFirst = true;
     List<StoreLocation> storeLocations;
-
+    private String url = "http://193.112.6.8/dishRank";
+    private List<RankItem> rankList = new ArrayList<>();
+    private int[] images = {R.drawable.number1, R.drawable.number2, R.drawable.number3, R.drawable.number4, R.drawable.number5};
+    public String rankString;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,8 +106,9 @@ public class MainActivity extends BaseActivity {
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(new MyLocationListener());
         setContentView(R.layout.activity_main);
-
+        sendRequestWithOkHttp();
         lHanlder = new LHanlder();
+
 
         initWidgets();
         requestPermission();
@@ -173,7 +178,10 @@ public class MainActivity extends BaseActivity {
                         mDrawerLayout.closeDrawers();
                         break;
                     case R.id.rank_activity:
-                        startActivity(new Intent(MainActivity.this, RankActivity.class));
+
+                        Intent intent = new Intent(MainActivity.this, RankActivity.class);
+                        intent.putExtra("rankData",rankString);
+                        startActivity(intent);
                         mDrawerLayout.closeDrawers();
                         break;
                     case R.id.logout:
@@ -667,5 +675,32 @@ public class MainActivity extends BaseActivity {
         }
     }
 
+
+    private void sendRequestWithOkHttp() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    OkHttpClient client = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .build();
+                    Response response = client.newCall(request).execute();
+                    String responseData = response.body().string();
+                    rankString = responseData;
+                    Log.d("123", rankString);
+//                    List<RankActivity.Data> data;
+//                    Gson gson = new Gson();
+//                    data = gson.fromJson(responseData, new TypeToken<List<RankActivity.Data>>() {}.getType());
+//                    for(int i=0; i<5; i++) {
+//                        RankItem rankItem = new RankItem("食堂：" + data.get(i).getCanteenName(), "店名：" + data.get(i).getRestName(), data.get(i).getDishName(), "推荐次数：" + data.get(i).getCount(), images[i]);
+//                        rankList.add(rankItem);
+//                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
 }
 

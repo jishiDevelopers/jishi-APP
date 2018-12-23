@@ -1,5 +1,6 @@
 package com.bbel.eatnow;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -76,11 +77,24 @@ public class RankActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
 
-        sendRequestWithOkHttp();
+        //sendRequestWithOkHttp();
 
-        for(int i = 0;i<100000000;i++){
-            int j = i;
-        }
+//        for(int i = 0;i<100000000;i++){
+//            int j = i;
+//        }
+        Intent intent =getIntent();
+        String responseData=intent.getStringExtra("rankData");
+
+
+        List<RankActivity.Data> data;
+        Gson gson = new Gson();
+        data = gson.fromJson(responseData, new TypeToken<List<RankActivity.Data>>() {}.getType());
+        for(int i=0; i<5; i++) {
+            RankItem rankItem = new RankItem("食堂：" + data.get(i).getCanteenName(), "店名：" + data.get(i).getRestName(), data.get(i).getDishName(), "推荐次数：" + data.get(i).getCount(), images[i]);
+            rankList.add(rankItem);
+            }
+
+        //
         Log.d("cnt", "ok");
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
