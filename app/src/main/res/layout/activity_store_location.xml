@@ -10,6 +10,26 @@
     <com.bbel.eatnow.customview.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    android:layout_height="match_parent" />
+
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <Button
+            android:layout_width="67dp"
+            android:layout_height="54dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="19dp"
+            android:background="@drawable/frog"
+            android:id="@+id/btn_home"/>
+
+
+    </RelativeLayout>
 
 </android.support.constraint.ConstraintLayout>
